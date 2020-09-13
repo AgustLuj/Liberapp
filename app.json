@@ -1,0 +1,12 @@
+{
+  "name": "Liberapp",
+  "displayName": "Liberapp",
+  "expo": {
+    "name": "Liberapp",
+    "slug": "Liberapp",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
