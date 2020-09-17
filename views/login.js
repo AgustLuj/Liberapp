@@ -22,7 +22,7 @@ class login extends Component{
                 index: 0,
                 routes: [
                   {
-                    name: 'UserViews',
+                    name: 'Tab',
                     params: { d },
                   },
                 ],

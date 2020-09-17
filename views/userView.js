@@ -19,22 +19,25 @@ class login extends Component{
     }
     componentDidUpdate(){
         //this.name= true;
-        //console.log(this.props.route)
-    }
-    render(){
-            let {name,imagen} = this.props.route.params.d;
-            let link =`https://adordni.ml/img/2${imagen}`;
-            return (
-                <View style = {{flex:1}}>
-                    <View style = {{flex: 10,backgroundColor: 'white',alignItems:'center'}}>
-                        <Text style={styles.text}>Buenas {name} </Text>
-                        <Image 
+        /*<Image 
                             resizeMode="contain" 
                             style={styles.dni} 
                             source={{
-                                uri:link}} />
+                                uri:link}} />*/
+        //console.log(this.props.route)
+    }
+    render(){
+            //let {name,imagen} = this.props.navigation.route.params.d;
+            console.log(this.props)
+            //let link =`https://adordni.ml/img/2${imagen}`;
+            return (
+                <View style = {{flex:1}}>
+                    <View style = {{flex: 10,backgroundColor: 'white',alignItems:'center'}}>
+                        <Text style={styles.text}>Buenas Agus </Text>
+                        
                     </View>
-                </View>);
+                </View>
+                );
             }
 }
     

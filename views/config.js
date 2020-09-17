@@ -8,7 +8,6 @@ class login extends Component{
         super(props);
     }
     render(){
-            let {hola} = this.props;
             return (
                 <View style = {{flex:1}}>
                     <View style = {{flex: 10,backgroundColor: 'white',alignItems:'center'}}>
