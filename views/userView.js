@@ -2,16 +2,25 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, Image} from 'react-native';
 import User from '../components/user';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-
+import AsyncStorage  from '@react-native-community/async-storage' 
+import { Header } from 'react-native-elements';
 class login extends Component{
     constructor(props){
         super(props);
-        this.name = null;
+        this.state = {
+
+        }
     }
     async componentDidMount(){
+        const {name,dni,imagen} =JSON.parse(await AsyncStorage.getItem('@UserData'));
+        this.setState({
+            name,
+            dni,
+            imagen
+        })
         /*await User.online((d)=>{
             if(d){
-                if(this.name === null){
+                if(this.'name' === null){
                     this.props.navigation.navigate('Login')
                 }
             } 
@@ -27,14 +36,25 @@ class login extends Component{
         //console.log(this.props.route)
     }
     render(){
+        
+            let {name,dni,imagen} = this.state;
             //let {name,imagen} = this.props.navigation.route.params.d;
-            console.log(this.props)
-            //let link =`https://adordni.ml/img/2${imagen}`;
+            //console.log(this.props)
+            let link =`https://adordni.ml/img/2${imagen}`;
             return (
+                
                 <View style = {{flex:1}}>
+                    <Header
+                        placement="left"
+                        leftComponent={{ icon: 'home', color: '#fff' ,onPress: () => this.props.navigation.navigate('Home'),}}
+                        rightComponent={{ icon: 'menu', color: '#fff',onPress: () => this.props.navigation.openDrawer(), }}
+                        containerStyle={{
+                            backgroundColor: '#f6b93b',
+                            justifyContent: 'space-around',
+                        }}
+		            />
                     <View style = {{flex: 10,backgroundColor: 'white',alignItems:'center'}}>
-                        <Text style={styles.text}>Buenas Agus </Text>
-                        
+                        <Text style={styles.text}>Bienvenido nuevamente {name} </Text>
                     </View>
                 </View>
                 );

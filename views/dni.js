@@ -1,35 +1,70 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View} from 'react-native';
+import { StyleSheet, Text, View, Image} from 'react-native';
 import User from '../components/user';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import AsyncStorage  from '@react-native-community/async-storage' 
 import { Header } from 'react-native-elements';
 
 class login extends Component{
     constructor(props){
         super(props);
+        this.state = {
+
+        }
+    }
+    async componentDidMount(){
+        const {name,dni,imagen,seguimiento} =JSON.parse(await AsyncStorage.getItem('@UserData'));
+        this.setState({
+            name,
+            dni,
+            imagen,
+            seguimiento
+        })
+        /*await User.online((d)=>{
+            if(d){
+                if(this.'name' === null){
+                    this.props.navigation.navigate('Login')
+                }
+            } 
+        })*/
     }
     render(){
+        let {name,dni,imagen,seguimiento} = this.state
+        let link =`https://adordni.ml/img/${imagen}`;
+        let link2 =`https://adordni.ml/img/2${imagen}`;
             return (
                 <View style = {{flex:1}}>
                     <Header
                         placement="left"
-                        leftComponent={{ icon: 'home',style: {}, color: '#fff' ,onPress: () => this.props.navigation.navigate('Home'),}}
-                        centerComponent={{ text: 'Configuracion', style: { color: '#fff',fontSize:hp('3.5%'), } }}
+                        leftComponent={{ icon: 'home', color: '#fff' ,onPress: () => this.props.navigation.navigate('Home'),}}
+                        centerComponent={{ text: 'Carnet', style: { color: '#fff',fontSize:hp('3.5%'), } }}
                         rightComponent={{ icon: 'menu', color: '#fff',onPress: () => this.props.navigation.openDrawer(), }}
                         containerStyle={{
                             backgroundColor: '#f6b93b',
                             justifyContent: 'space-around',
                         }}
-                        
 		            />
                     <View style = {{flex: 10,backgroundColor: 'white',alignItems:'center'}}>
-                        <Text style={styles.text}>Prueba</Text>
+                        <Text style={styles.text}>Tu Dni es: {dni} y numero de seguimiento es:{seguimiento} </Text>
+                        <Image 
+                            resizeMode="contain" 
+                            style={styles.dni} 
+                            source={{
+                                uri:link}} />
+                        <Image 
+                            resizeMode="contain" 
+                            style={styles.dni} 
+                            source={{
+                                uri:link2}} />
                     </View>
                 </View>);
             }
 }
     
 const styles = StyleSheet.create({
+    dni:{
+        height: hp('40%'), width: wp('100%')
+    },
     container: {
     flex: 1,
     backgroundColor: '#7f8c8d',
@@ -44,12 +79,12 @@ const styles = StyleSheet.create({
     //textShadowColor: "red",
     },
     text:{
-    color:'black',
-    fontSize:hp('3%'),
-    marginTop:hp('1%'),
-    marginBottom:hp('0.1%'),
-    alignItems: 'center',
-    textAlign:"center",
+        color:'black',
+        fontSize:hp('2%'),
+        marginTop:hp('1%'),
+        marginBottom:hp('0.1%'),
+        alignItems: 'center',
+        textAlign:"center",
     },
     textFooter:{
     color:'black',
