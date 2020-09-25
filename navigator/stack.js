@@ -14,6 +14,7 @@ import AsyncStorage  from '@react-native-community/async-storage'
 // Screen
 import Routes from './stackRoutes';
 
+
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -53,13 +54,6 @@ function CustomDrawerContent(props) {
 	  <DrawerContentScrollView {...props}>
 		<DrawerItemList {...props} />
 		<DrawerItem
-		  label="Noticias"
-		  onPress={() => props.navigation.navigate('Tabs', {
-			screen: 'Dni',
-			params: { type: 1 },
-		  })}
-		/>
-		<DrawerItem
 		  label="Cerrar sesion"
 		  onPress={async () =>{
 			
@@ -81,54 +75,37 @@ function CustomDrawerContent(props) {
 	  </DrawerContentScrollView>
 	);
   }
-function drawerScreen({navigation},route){
-	//console.log(route.params)
-	return (
-		<Drawer.Navigator drawerPosition="right" drawerContentOptions={{
-			//activeBackgroundColor:'#f6b93b',
-			activeTintColor:'#e58e26'
-		}} drawerContent={props => <CustomDrawerContent {...props} />}>
-		  <Drawer.Screen name="Home" component={Routes.UserView} creenProps={navigation.route}/>
-		  <Drawer.Screen name="Carnet" component={Routes.Dni} creenProps={navigation.route}/>
-		  <Drawer.Screen name="Configuracion" component={Routes.Config} creenProps={navigation.route}/>
-		  <Drawer.Screen name="Votaciones" component={Feed} creenProps={navigation.route}/>
-		  <Drawer.Screen name="Verificaciones" component={Feed} creenProps={navigation.route}/>
-		</Drawer.Navigator>
-	  );
+class drawerScreen extends Component{
+	constructor(props){
+		super(props);
+		this.state={
+			
+		}
+		this.verificado=true;
+		this.admin=false;
+    }
+	async componentDidMount(){
+		const {verificado,admin} =JSON.parse(await AsyncStorage.getItem('@UserData'));
+		this.admin=admin;
+		this.verificado=verificado;
+	}
+    render(){
+		return (
+			<Drawer.Navigator drawerPosition="right" drawerContentOptions={{
+				//activeBackgroundColor:'#f6b93b',
+				activeTintColor:'#e58e26'
+			}} drawerContent={props => <CustomDrawerContent {...props} />}>
+			<Drawer.Screen name="Home" component={Routes.UserView}/>
+			<Drawer.Screen name="Carnet" component={Routes.Dni} />
+			<Drawer.Screen name="Configuracion" component={Routes.Config} />
+			<Drawer.Screen name="Noticias" component={Routes.News}/>
+			<Drawer.Screen name="Votaciones" component={Feed} />
+			{!this.verificado?<Drawer.Screen name="Verificaciones" component={Feed} /> :null} 
+			</Drawer.Navigator>
+		);
+	}
 }
 
-function TabScreen({navigation},route) {
-	//console.log(navigation.route)
-	
-	return (
-		
-		<Tab.Navigator
-			tabBarOptions={{
-				activeTintColor: "#ffff00",
-				showIcon: false,
-				labelStyle: {
-					fontSize: 20
-				}, 
-				style: {
-					backgroundColor:'#3d3d3d',
-				}
-				//activeTintColor: 'tomato',
-				//inactiveTintColor: 'gray',
-			  }}
-		>
-
-			<Tab.Screen name="Home" component={Routes.UserView}  />
-			<Tab.Screen name="Dni" component={Routes.Dni}/>
-			<Tab.Screen name="Settings" component={Routes.Config}/>
-			<Tab.Screen name="Opciones" component={Notifications} listeners={({ navigation }) => ({
-				tabPress: e => {
-					e.preventDefault();
-					navigation.openDrawer();
-				},
-			})}/>
-		</Tab.Navigator>
-	);
-}
 class AppStack extends Component{
     constructor(props){
 		super(props);
@@ -152,7 +129,7 @@ class AppStack extends Component{
     async componentDidMount(){
 		let value = await AsyncStorage.getItem('@UserData');
 		if(null !== value){
-			this.setState({'d':true})
+			this.setState({'d':true,'ver':value.verificado})
 		}else{
 			this.setState({'d':false})
 		}     
@@ -160,7 +137,7 @@ class AppStack extends Component{
 	
 	//component={(!d)? Routes.Login:drawerScreen}
     render(){
-		const {d}= this.state;
+		const {d,ver}= this.state;
         return (
 			<NavigationContainer>
 				<Stack.Navigator>
@@ -169,6 +146,7 @@ class AppStack extends Component{
 						component={(!d)? Routes.Login:drawerScreen}
 						options={{
 							headerShown: false,
+							params:{ver}
 						}}
 					/>
 					<Stack.Screen

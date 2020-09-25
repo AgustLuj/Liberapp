@@ -17,22 +17,28 @@ class login extends Component{
         this.getUser = this.getUser.bind(this)
     }
     getUser(){
-        console.log(this.dni,this.seg)
+        
         if(this.dni != null && this.seg != null){
-          User.getData(this.dni,this.seg,async (d)=>{
-              //console.log(d)
-            try{
-                await AsyncStorage.setItem(
-                    '@UserData',
-                    JSON.stringify(d)
-                );
-                const value = await AsyncStorage.getItem('name');
-                if(value !== 'null'){
-                    this.props.navigation.replace('Tabs' )
+          User.getData(this.dni,this.seg,async (d,user)=>{
+            console.log(d,user)
+            if(d){
+                try{
+                    await AsyncStorage.setItem(
+                        '@UserData',
+                        JSON.stringify(user)
+                    );
+                    const value = await AsyncStorage.getItem('name');
+                    if(value !== 'null'){
+                        this.props.navigation.replace('Tabs' )
+                    }
+                }catch{
+                    this.setState({'errg':true})
                 }
-            }catch{
-
+            }else{
+                this.setState({'errg':true})
             }
+              //console.log(d)
+            
             
           })
         }
@@ -62,14 +68,14 @@ class login extends Component{
                     onChangeText={text => this.changeSeg(text)}
                 />*/
     render(){
-        const {name}= this.state
+        const {name,errg}= this.state
         return (
             
             <View style = {{flex:1}}>
                 <View style = {{flex: 10,backgroundColor: 'white',alignItems:'center'}}>
                 <Text h1 h1Style={styles.ttitle}>Bienvenidos</Text>
                
-                
+                {errg?<Text style={{color:'red'}} >Dni o Seguimineto incorrecto</Text>:null}
                 <Input
                     containerStyle={styles.tImput}
                     placeholder='100000'

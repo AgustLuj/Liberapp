@@ -1,14 +1,94 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View} from 'react-native';
+import { StyleSheet, View} from 'react-native';
 import User from '../components/user';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import { Header } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { Input, Text, Button } from 'react-native-elements';
+import AsyncStorage  from '@react-native-community/async-storage' 
 
 class login extends Component{
     constructor(props){
         super(props);
+        this.name='';
+        this.user='';
+        this.seg='';
+        this.dni='';
+        this.segOld='';
+
+        this.segRegex=/\d\d\d\d-\d\d\d\d/
+
+        this.state = {
+
+        }
+    }
+    async componentDidMount(){
+        const {name,username,dni,imagen,verificado,admin} =JSON.parse(await AsyncStorage.getItem('@UserData'));
+        this.dni= dni;
+        this.setState({
+            name,
+            username,
+            dni,
+            imagen,
+            verificado,
+            admin
+        })
+    }
+    async changeUser(){
+        await this.checkSeg(this.segOld,async (d)=>{
+            if(d){
+                await User.checkPass(this.dni,this.segOld,async(e)=>{
+                    if(e){
+                        await this.checkSeg(this.seg,async(d)=>{
+                            if(d){
+                                await User.changeUser(this.dni,this.name,this.user,this.seg,this.segOld,async (f)=>{
+                                    if(f){
+                                        await AsyncStorage.removeItem('@UserData');
+			                            this.props.navigation.replace('LoginFinish')
+                                    }else{
+                                        this.setState({'errg':true})
+                                    }
+                                })                           
+                            }else{
+                                this.setState({'err2':true})  
+                            }
+                            
+                        });
+                    }else{
+                        this.setState({'err':true})
+                    }  
+                })
+            }else{
+                this.setState({'err':true})
+            }
+            
+        });
+        
+        
+        
+    }
+    checkSeg(d,fn){
+        if(!this.segRegex.test(d)){
+            fn(false)
+        }else{
+            fn(true)
+            
+        }
+    }
+    changeName(text){
+        this.name=text;
+    }
+    changeUserText(text){
+        this.user=text;
+    }
+    changeSeg(text){
+        this.seg=text;
+    }
+    changeSegOld(text){
+        this.segOld=text;
     }
     render(){
+            let {name,dni,username,err,err2,errg} = this.state;
             return (
                 <View style = {{flex:1}}>
                     <Header
@@ -23,7 +103,73 @@ class login extends Component{
                         
 		            />
                     <View style = {{flex: 10,backgroundColor: 'white',alignItems:'center'}}>
-                        <Text style={styles.text}>Prueba</Text>
+                    {errg?<Text style={{color:'red'}}>Algo Salio mal intentar nuevamente</Text>:null}
+                    <Input
+                        containerStyle={styles.tImput}
+                        placeholder={name}
+                        label="Nombre:"
+                        leftIcon={
+                            <Icon
+                                name='user-o'
+                                size={24}
+                                color='#f6b93b'
+                            />
+                        }
+                        onChangeText={text => this.changeName(text)}
+                    />
+                    <Input
+                        containerStyle={styles.tImput}
+                        placeholder={username}
+                        label="Usuario:"
+                        leftIcon={
+                            <Icon
+                                name='user-o'
+                                size={24}
+                                color='#f6b93b'
+                            />
+                        }
+                        maxLength={40}
+                        onChangeText={text => this.changeUserText(text)}
+                    />
+                    <Input
+                        containerStyle={styles.tImput}
+                        label="N° de seguimiento"
+                        placeholder='xxxx-xxxx'
+                        keyboardType = 'numeric'
+                        leftIcon={
+                            <Icon
+                            name='address-card-o'
+                            size={20}
+                            color='#f6b93b'
+                            />
+                        }
+                        maxLength={9}
+                        onChangeText={text => this.changeSegOld(text)}
+                        errorMessage={err?'Codigo de seguimiento incorrecto':null}
+                    />
+                    <Input
+                        containerStyle={styles.tImput}
+                        label="Nuevo N° de seguimiento"
+                        placeholder='xxxx-xxxx'
+                        keyboardType = 'numeric'
+                        leftIcon={
+                            <Icon
+                            name='address-card-o'
+                            size={20}
+                            color='#f6b93b'
+                            />
+                        }
+                        maxLength={9}
+                        onChangeText={text => this.changeSeg(text)}
+                        errorMessage={err2?'Ingresar correctamente el codigo de seguimiento':null}
+                    />
+                    <Button
+                        titleStyle={styles.bTitle}
+                        containerStyle={styles.bContainer}
+                        title="Ingresar"
+                        type="outline"
+                        onPress={()=>{this.changeUser()}}
+                    />
                     </View>
                 </View>);
             }
