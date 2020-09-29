@@ -1,5 +1,5 @@
 //const pagina = 'http://192.168.100.42/users/';
-const pagina = 'http://192.168.100.42:3000/users';
+const pagina = 'http://192.168.100.42:3000';
 
 class User{
   async online(fn){
@@ -14,7 +14,7 @@ class User{
     fn(data.anda);
   }
   async getData(dni,seg,fn){
-    let querry = await fetch(`${pagina}/ingresar`, {
+    let querry = await fetch(`${pagina}/users/ingresar`, {
         method: 'POST',
         body: JSON.stringify({dni,seg}),
         headers: {
@@ -38,7 +38,7 @@ class User{
   }
   async changeUser(dni,name,usern,seg,segold,fn){
     console.log(dni,name,seg,usern)
-    const querry = await fetch(`${pagina}/changeUser`,{
+    const querry = await fetch(`${pagina}/users/changeUser`,{
       method:'POST',
       body: JSON.stringify({dni,name,usern,seg,segold}),
       headers:{
@@ -55,7 +55,7 @@ class User{
   }
   async checkPass(dni,seg,fn){
     //console.log(dni,seg)
-    const querry = await fetch(`${pagina}/checkPass`,{
+    const querry = await fetch(`${pagina}/users/checkPass`,{
       method:'POST',
       body: JSON.stringify({dni,seg}),
       headers:{
@@ -69,6 +69,22 @@ class User{
     }else{
       fn(false);
     }   
+  }
+  async allnews(){
+    const querry = await fetch(`${pagina}/news`,{
+      method:'POST',
+      body: JSON.stringify({dni,seg}),
+      headers:{
+        Accept:'application/json',
+        'Content-Type':'application/json',
+      }
+    });
+    const data = await querry.json();
+    if(data['err'] === true){
+      fn(true);
+    }else{
+      fn(false);
+    } 
   }
 }
 export default new User;

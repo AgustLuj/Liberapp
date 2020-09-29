@@ -10,38 +10,43 @@ class login extends Component{
         super(props);
         this.dni=null;
         this.seg=null;
-    
+        this.dniregex=/\d\d\d\d/;
+        this.segregex=/[0-9]*-[0-9]*/;
         this.state= {
           name:null,
         }
         this.getUser = this.getUser.bind(this)
     }
     getUser(){
-        
-        if(this.dni != null && this.seg != null){
-          User.getData(this.dni,this.seg,async (d,user)=>{
-            console.log(d,user)
-            if(d){
-                try{
-                    await AsyncStorage.setItem(
-                        '@UserData',
-                        JSON.stringify(user)
-                    );
-                    const value = await AsyncStorage.getItem('name');
-                    if(value !== 'null'){
-                        this.props.navigation.replace('Tabs' )
-                    }
-                }catch{
-                    this.setState({'errg':true})
-                }
+        if(this.dniregex.test(this.dni)){
+            this.setState({'errD':false})
+            if(this.segregex.test(this.seg)){
+                this.setState({'errS':false})
+                if(this.dni != null && this.seg != null){
+                    User.getData(this.dni,this.seg,async (d,user)=>{
+                        if(d){
+                            try{
+                                await AsyncStorage.setItem(
+                                    '@UserData',
+                                    JSON.stringify(user)
+                                );
+                                const value = await AsyncStorage.getItem('name');
+                                if(value !== 'null'){
+                                    this.props.navigation.replace('Tabs' )
+                                }
+                            }catch{
+                                this.setState({'errg':true})
+                            }
+                        }else{
+                            this.setState({'errg':true})
+                }})}
             }else{
-                this.setState({'errg':true})
+                this.setState({'errS':true})
             }
-              //console.log(d)
-            
-            
-          })
+        }else{
+            this.setState({'errD':true})
         }
+        
         
     }
     changeDni(text){
@@ -68,7 +73,7 @@ class login extends Component{
                     onChangeText={text => this.changeSeg(text)}
                 />*/
     render(){
-        const {name,errg}= this.state
+        const {name,errg,errD,errS}= this.state
         return (
             
             <View style = {{flex:1}}>
@@ -89,20 +94,22 @@ class login extends Component{
                     }
                     keyboardType = 'numeric'
                     onChangeText={text => this.changeDni(text)}
+                    errorMessage={errD?'Formato del Dni incorrecto':null}
                     />
-                    <Input
-                containerStyle={styles.tImput}
-                label="Ingrese su N° de seguimiento"
-                placeholder='xxxx-xxxx'
-                keyboardType = 'numeric'
-                leftIcon={
-                    <Icon
-                    name='address-card-o'
-                    size={20}
-                    color='#f6b93b'
-                    />
-                }
-                onChangeText={text => this.changeSeg(text)}
+                <Input
+                    containerStyle={styles.tImput}
+                    label="Ingrese su N° de seguimiento"
+                    placeholder='xxxx-xxxx'
+                    keyboardType = 'numeric'
+                    leftIcon={
+                        <Icon
+                        name='address-card-o'
+                        size={20}
+                        color='#f6b93b'
+                        />
+                    }
+                    onChangeText={text => this.changeSeg(text)}
+                    errorMessage={errS?'Formato del N° Seguimiento incorrecto':null}
                 />
                 <Button
                     titleStyle={styles.bTitle}
@@ -176,7 +183,7 @@ const styles = StyleSheet.create({
     tImput:{
         height: hp('5%'),
         width:wp('70%'),
-        margin:hp('4%'),
+        margin:hp('5%'),
     //backgroundColor:'grey',
     }
 });
