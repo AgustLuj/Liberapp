@@ -70,21 +70,17 @@ class User{
       fn(false);
     }   
   }
-  async allnews(){
+  async allnews(fn){
     const querry = await fetch(`${pagina}/news`,{
-      method:'POST',
-      body: JSON.stringify({dni,seg}),
+      method:'GET',
       headers:{
         Accept:'application/json',
         'Content-Type':'application/json',
       }
     });
     const data = await querry.json();
-    if(data['err'] === true){
-      fn(true);
-    }else{
-      fn(false);
-    } 
+    //console.log(data)
+    fn(false,data)
   }
 }
 export default new User;

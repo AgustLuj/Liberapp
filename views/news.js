@@ -21,20 +21,39 @@ class News extends Component{
             verificado,
             admin
         })
+        let noticias = []
+        User.allnews((err,d)=>{
+            if(err){
+                this.setState({'errg':true});
+            }else{
+                console.log(d[0].tittle)
+            }
+        })
     }
     render(){
         
-        let {name,dni,imagen,verificado,admin} = this.state;
+        let {name,dni,imagen,verificado,admin,errg} = this.state;
         let link =`http://localhost:3000/img/topodorni.jpg`;
         var noticias = [];
-        for (let i = 0; i < 10; i++) {
+        /*for (let i = 0; i < 10; i++) {
             noticias.push(
                 <View style = {{flex: 1,backgroundColor: 'white',flexDirection: 'column',borderBottomWidth:1,borderBottomColor:'black' }}>
                     <Text style={styles.ttitle}>Anuncio de Marcha</Text>
                     <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('5%')}}>El dia 8 de noviembre se va a realizar una marcha en el obelsico y en cada parte de argentina no sean tibios y vayan</Text>
                 </View>
             ) 
-        }
+        }*/
+        /*<ScrollView style={{flex: 1,backgroundColor: 'white',flexDirection: 'column'}}>
+                        <View style = {{flex: 1,backgroundColor: 'white',borderBottomWidth:1,borderBottomColor:'black' }}>
+                                <Text style={styles.ttitle}>Encuenta</Text>
+                                <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('5%')}}>Vota al mejor</Text>
+                                <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('8%')}}>Impresoradorni</Text>  
+                                <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('8%')}}>General blanoc</Text>  
+                                <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('8%')}}>che Adorni</Text>    
+                                <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('8%')}}>Adorni Enojado</Text> 
+                            </View>
+                        {noticias}
+                    </ScrollView>  */
         return (
             <View style = {{flex:1}}>
                 <Header
@@ -48,17 +67,7 @@ class News extends Component{
                     }}
                 />
                 <View style = {{flex: 1,backgroundColor: 'white',flexDirection: 'column'}}>
-                    <ScrollView style={{flex: 1,backgroundColor: 'white',flexDirection: 'column'}}>
-                        <View style = {{flex: 1,backgroundColor: 'white',borderBottomWidth:1,borderBottomColor:'black' }}>
-                                <Text style={styles.ttitle}>Encuenta</Text>
-                                <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('5%')}}>Vota al mejor</Text>
-                                <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('8%')}}>Impresoradorni</Text>  
-                                <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('8%')}}>General blanoc</Text>  
-                                <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('8%')}}>che Adorni</Text>    
-                                <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('8%')}}>Adorni Enojado</Text> 
-                            </View>
-                        {noticias}
-                    </ScrollView>  
+                    {errg?<Text style={{color:'red'}}>Algo Salio mal intentar nuevamente</Text>:null}
                 </View>
             </View>
             );
