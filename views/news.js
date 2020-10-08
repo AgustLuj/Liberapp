@@ -21,7 +21,7 @@ class News extends Component{
             verificado,
             admin
         })
-        let noticias = []
+        let noticias = [{"_id":"5f75b6776ae56408e8adf3aa","title":"Bienvenido","text":"Gracias por utilizar esta aplicacion","author":{"verificado":true,"admin":true,"_id":"5f24a4e9ac12c01e74455404","username":"AgustLuj","name":"Topodorni","dni":"111239"},"Date":"2020-10-01T10:59:03.610Z","__v":0},{"_id":"5f75b6766ae56408e8adf3a8","title":"Bienvenido","text":"Gracias por utilizar esta aplicacion","author":{"verificado":true,"admin":true,"_id":"5f24a4e9ac12c01e74455404","username":"AgustLuj","name":"Topodorni","dni":"111239"},"Date":"2020-10-01T10:59:02.302Z","__v":0},{"_id":"5f75b6746ae56408e8adf3a6","title":"Bienvenido","text":"Gracias por utilizar esta aplicacion","author":{"verificado":true,"admin":true,"_id":"5f24a4e9ac12c01e74455404","username":"AgustLuj","name":"Topodorni","dni":"111239"},"Date":"2020-10-01T10:59:00.647Z","__v":0},{"_id":"5f75b6736ae56408e8adf3a4","title":"Bienvenido","text":"Gracias por utilizar esta aplicacion","author":{"verificado":true,"admin":true,"_id":"5f24a4e9ac12c01e74455404","username":"AgustLuj","name":"Topodorni","dni":"111239"},"Date":"2020-10-01T10:58:59.364Z","__v":0},{"_id":"5f75b6716ae56408e8adf3a2","title":"Bienvenido","text":"Gracias por utilizar esta aplicacion","author":{"verificado":true,"admin":true,"_id":"5f24a4e9ac12c01e74455404","username":"AgustLuj","name":"Topodorni","dni":"111239"},"Date":"2020-10-01T10:58:57.172Z","__v":0},{"_id":"5f75b66f6ae56408e8adf3a0","title":"Bienvenido","text":"Gracias por utilizar esta aplicacion","author":{"verificado":true,"admin":true,"_id":"5f24a4e9ac12c01e74455404","username":"AgustLuj","name":"Topodorni","dni":"111239"},"Date":"2020-10-01T10:58:55.569Z","__v":0},{"_id":"5f75b66e6ae56408e8adf39e","title":"Bienvenido","text":"Gracias por utilizar esta aplicacion","author":{"verificado":true,"admin":true,"_id":"5f24a4e9ac12c01e74455404","username":"AgustLuj","name":"Topodorni","dni":"111239"},"Date":"2020-10-01T10:58:54.010Z","__v":0},{"_id":"5f75b66c6ae56408e8adf39c","title":"Bienvenido","text":"Gracias por utilizar esta aplicacion","author":{"verificado":true,"admin":true,"_id":"5f24a4e9ac12c01e74455404","username":"AgustLuj","name":"Topodorni","dni":"111239"},"Date":"2020-10-01T10:58:52.461Z","__v":0},{"_id":"5f75b66a6ae56408e8adf39a","title":"Bienvenido","text":"Gracias por utilizar esta aplicacion","author":{"verificado":true,"admin":true,"_id":"5f24a4e9ac12c01e74455404","username":"AgustLuj","name":"Topodorni","dni":"111239"},"Date":"2020-10-01T10:58:50.446Z","__v":0},{"_id":"5f75b6686ae56408e8adf398","title":"Bienvenido","text":"Gracias por utilizar esta aplicacion","author":{"verificado":true,"admin":true,"_id":"5f24a4e9ac12c01e74455404","username":"AgustLuj","name":"Topodorni","dni":"111239"},"Date":"2020-10-01T10:58:48.734Z","__v":0}]
         User.allnews((err,d)=>{
             if(err){
                 this.setState({'errg':true});
@@ -34,7 +34,7 @@ class News extends Component{
         
         let {name,dni,imagen,verificado,admin,errg} = this.state;
         let link =`http://localhost:3000/img/topodorni.jpg`;
-        var noticias = [];
+
         /*for (let i = 0; i < 10; i++) {
             noticias.push(
                 <View style = {{flex: 1,backgroundColor: 'white',flexDirection: 'column',borderBottomWidth:1,borderBottomColor:'black' }}>
@@ -68,6 +68,16 @@ class News extends Component{
                 />
                 <View style = {{flex: 1,backgroundColor: 'white',flexDirection: 'column'}}>
                     {errg?<Text style={{color:'red'}}>Algo Salio mal intentar nuevamente</Text>:null}
+                    <ScrollView style={{flex: 1,backgroundColor: 'white',flexDirection: 'column'}}>
+                        <View style = {{flex: 1,backgroundColor: 'white',borderBottomWidth:1,borderBottomColor:'black' }}>
+                                <Text style={styles.ttitle}>Encuenta</Text>
+                                <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('5%')}}>Vota al mejor</Text>
+                                <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('8%')}}>Impresoradorni</Text>  
+                                <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('8%')}}>General blanoc</Text>  
+                                <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('8%')}}>che Adorni</Text>    
+                                <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('8%')}}>Adorni Enojado</Text> 
+                            </View>
+                    </ScrollView> 
                 </View>
             </View>
             );

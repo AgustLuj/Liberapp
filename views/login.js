@@ -39,7 +39,9 @@ class login extends Component{
                             }
                         }else{
                             this.setState({'errg':true})
-                }})}
+                        }
+                    })
+                }
             }else{
                 this.setState({'errS':true})
             }

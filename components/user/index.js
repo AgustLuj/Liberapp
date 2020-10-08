@@ -28,13 +28,14 @@ class User{
       if(data['err'] === true){
         fn(false,null);
       }
-    }
-    if(null !== data['user']){
+    }else{
+      if(null !== data['user']){
         fn(true,data['user']);
+      }else{
+        fn(false,null);
+      }
     }
-    else{
-      
-    }
+    
   }
   async changeUser(dni,name,usern,seg,segold,fn){
     console.log(dni,name,seg,usern)

@@ -12,100 +12,101 @@ class login extends Component{
         }
     }
     async componentDidMount(){
-        const {name,dni,imagen,verificado,admin} =JSON.parse(await AsyncStorage.getItem('@UserData'));
+        let {seguimiento,dni} = JSON.parse(await AsyncStorage.getItem('@UserData'));
+        await User.getData(dni,seguimiento,async (d,user)=>{
+            console.log(d)
+            if(d){
+                try{
+                    console.log('holaa')
+                    await AsyncStorage.mergeItem(
+                        '@UserData',
+                        JSON.stringify(user)
+                      );
+                    /*await AsyncStorage.setItem(
+                        '@UserData',
+                        JSON.stringify(user)
+                    );*/
+                    this.data()
+                }catch{
+                    this.data()
+                }
+            }else{
+                this.data()
+            }
+        })
+    }
+    async data(){
+        let {name,dni,imagen,verificado,admin,imgP} = JSON.parse(await AsyncStorage.getItem('@UserData'));
         this.setState({
             name,
             dni,
             imagen,
             verificado,
-            admin
+            admin,
+            imgP
         })
-        /*await User.online((d)=>{
-            if(d){
-                if(this.'name' === null){
-                    this.props.navigation.navigate('Login')
-                }
-            } 
-        })*/
     }
-    componentDidUpdate(){
-        //this.name= true;
-        /*<Image 
+    render(){
+        let {name,dni,verificado,admin,imgP,seguimiento} = this.state;
+        //this.getData();
+        var noticias = [];
+        for (let i = 0; i < 5; i++) {
+            noticias.push({
+                title:'Anuncio de Marcha',
+                text:'El dia 8 de noviembre se va a realizar una marcha en el obelsico y en cada parte de argentina no sean tibios y vayan'
+                }
+            ) 
+        }
+        let link =`https://adordni.ml/img/${imgP}`;
+        return (
+            
+            <View style = {{flex:1}}>
+                <Header
+                    placement="left"
+                    leftComponent={{ icon: 'home', color: '#fff' ,onPress: () => this.props.navigation.navigate('Home'),}}
+                    rightComponent={{ icon: 'menu', color: '#fff',onPress: () => this.props.navigation.openDrawer(), }}
+                    containerStyle={{
+                        backgroundColor: '#f6b93b',
+                        justifyContent: 'space-around',
+                    }}
+                />
+                <View style = {{flex: 1,backgroundColor: 'white',flexDirection: 'column'}}>
+                    <View style = {{flex: 0.9,backgroundColor: 'white',flexDirection: 'row'}}>
+                        <View style = {{flex: 1,backgroundColor: 'white',flexDirection: 'row'}}>
+                        <Image 
                             resizeMode="contain" 
                             style={styles.dni} 
                             source={{
                                 uri:link}} />
-                               
-                                
-                                
-                                
-                                */
-        //console.log(this.props.route)
-    }
-    render(){
-        
-            let {name,dni,imagen,verificado,admin} = this.state;
-            //let {name,imagen} = this.props.navigation.route.params.d;
-            //console.log(this.props)
-            var noticias = [];
-            for (let i = 0; i < 5; i++) {
-                noticias.push(
-                    <View style = {{flex: 1,backgroundColor: 'white',flexDirection: 'column',borderBottomWidth:1,borderBottomColor:'black' }}>
-                        <Text style={styles.ttitle}>Anuncio de Marcha</Text>
-                        <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('5%')}}>El dia 8 de noviembre se va a realizar una marcha en el obelsico y en cada parte de argentina no sean tibios y vayan</Text>
+                        </View>
+                        <View style = {{flex: 1.45,backgroundColor: 'white',flexDirection: 'column'}}>
+                            <Text style={styles.ttitle}>Bienvenido!!</Text>    
+                            <Text style={styles.text}>{name}</Text>
+                            <Text style={styles.text}>Tu dni es:{dni}</Text>
+                            {!verificado?<Text style={styles.text}>No esta verificado</Text> :null} 
+                            {admin?<Text style={styles.text}>Sos Admin</Text> :null} 
+                        </View>
                     </View>
-                ) 
-            }
-            let link =`http://localhost:3000/img/topodorni.jpg`;
-            return (
-                
-                <View style = {{flex:1}}>
-                    <Header
-                        placement="left"
-                        leftComponent={{ icon: 'home', color: '#fff' ,onPress: () => this.props.navigation.navigate('Home'),}}
-                        rightComponent={{ icon: 'menu', color: '#fff',onPress: () => this.props.navigation.openDrawer(), }}
-                        containerStyle={{
-                            backgroundColor: '#f6b93b',
-                            justifyContent: 'space-around',
-                        }}
-		            />
-                    <View style = {{flex: 1,backgroundColor: 'white',flexDirection: 'column'}}>
-                        <View style = {{flex: 0.9,backgroundColor: 'white',flexDirection: 'row'}}>
-                            <View style = {{flex: 1,backgroundColor: 'white',flexDirection: 'row'}}>
-                            <Image 
-                                resizeMode="contain" 
-                                style={styles.dni} 
-                                source={require('../img/topodorni.jpg')} />
+                    <View style = {{flex: 0.2,backgroundColor: 'white',flexDirection: 'row', borderBottomWidth:2,borderBottomColor:'black'}}>
+                        <Text style={{color:'black',fontSize:hp('3.5%'),marginTop:hp('1%')}}>Noticias</Text>                       
+                    </View>
+                    <View style = {{flex: 2.3,backgroundColor: 'white',flexDirection: 'column'}}>
+                    <ScrollView style={{flex: 1,backgroundColor: 'white',flexDirection: 'column'}}>
+                        {noticias.map(({title,text})=>{
+                            return(
+                            <View style = {{flex: 1,backgroundColor: 'white',flexDirection: 'column',borderBottomWidth:1,borderBottomColor:'black' }}>
+                                <Text style={styles.ttitle}>{title}</Text>
+                                <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('5%')}}>{text}</Text>
                             </View>
-                            <View style = {{flex: 1.45,backgroundColor: 'white',flexDirection: 'column'}}>
-                                <Text style={styles.ttitle}>Bienvenido!!</Text>    
-                                <Text style={styles.text}>{name}</Text>
-                                <Text style={styles.text}>Tu dni es:{dni}</Text>
-                                {!verificado?<Text style={styles.text}>No esta verificado</Text> :null} 
-                                {admin?<Text style={styles.text}>Sos Admin</Text> :null} 
-                            </View>
-                        </View>
-                        <View style = {{flex: 0.2,backgroundColor: 'white',flexDirection: 'row', borderBottomWidth:2,borderBottomColor:'black'}}>
-                            <Text style={{color:'black',fontSize:hp('3.5%'),marginTop:hp('1%')}}>Noticias</Text>                       
-                        </View>
-                        <View style = {{flex: 2.3,backgroundColor: 'white',flexDirection: 'column'}}>
-                        <ScrollView style={{flex: 1,backgroundColor: 'white',flexDirection: 'column'}}>
-                            <View style = {{flex: 1,backgroundColor: 'white',borderBottomWidth:1,borderBottomColor:'black' }}>
-                                    <Text style={styles.ttitle}>Encuenta</Text>
-                                    <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('5%')}}>Vota al mejor</Text>
-                                    <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('8%')}}>Impresoradorni</Text>  
-                                    <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('8%')}}>General blanoc</Text>  
-                                    <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('8%')}}>che Adorni</Text>    
-                                    <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('8%')}}>Adorni Enojado</Text> 
-                            </View>
-                            {noticias}
-                        </ScrollView>
-                            
-                        </View>
+                            )
+                        })}
+                    </ScrollView>
+                        
                     </View>
                 </View>
-                );
-            }
+            </View>
+            );
+        }
 }
     
 const styles = StyleSheet.create({

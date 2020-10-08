@@ -51,11 +51,6 @@ class login extends Component{
                             style={styles.dni} 
                             source={{
                                 uri:link}} />
-                        <Image 
-                            resizeMode="contain" 
-                            style={styles.dni} 
-                            source={{
-                                uri:link2}} />
                     </View>
                 </View>);
             }
