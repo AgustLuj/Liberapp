@@ -39,21 +39,20 @@ class login extends Component{
             if(d){
                 await User.checkPass(this.dni,this.segOld,async(e)=>{
                     if(e){
-                        await this.checkSeg(this.seg,async(d)=>{
+                        if(this.seg === ''){
+                            this.changeDb(this.dni,this.name,this.user,this.seg,this.segOld);
+                        }else{
+                          await this.checkSeg(this.seg,async(d)=>{
                             if(d){
-                                await User.changeUser(this.dni,this.name,this.user,this.seg,this.segOld,async (f)=>{
-                                    if(f){
-                                        await AsyncStorage.removeItem('@UserData');
-			                            this.props.navigation.replace('LoginFinish')
-                                    }else{
-                                        this.setState({'errg':true})
-                                    }
-                                })                           
+                                this.changeDb(this.dni,this.name,this.user,this.seg,this.segOld);                   
                             }else{
                                 this.setState({'err2':true})  
                             }
                             
-                        });
+                        });  
+                        }
+                        
+                        
                     }else{
                         this.setState({'err':true})
                     }  
@@ -63,9 +62,16 @@ class login extends Component{
             }
             
         });
-        
-        
-        
+    }
+    async changeDb(dni,name,user,seg,segOld){
+        await User.changeUser(dni,name,user,seg,segOld,async (f)=>{
+            if(f){
+                await AsyncStorage.removeItem('@UserData');
+                this.props.navigation.replace('LoginFinish')
+            }else{
+                this.setState({'errg':true})
+            }
+        })
     }
     checkSeg(d,fn){
         if(!this.segRegex.test(d)){

@@ -7,17 +7,31 @@ import { Header } from 'react-native-elements';
 class login extends Component{
     constructor(props){
         super(props);
+        this.name='';
+        this.dni = '';
+        this.imagen='';
+        this.verificado=''
+        this.admin=''
+        this.imgP=''
+
+        this.data();
         this.state = {
 
         }
     }
     async componentDidMount(){
-        let {seguimiento,dni} = JSON.parse(await AsyncStorage.getItem('@UserData'));
-        await User.getData(dni,seguimiento,async (d,user)=>{
-            console.log(d)
+        let {name,dni,imagen,verificado,admin,imgP} = JSON.parse(await AsyncStorage.getItem('@UserData'));
+        this.setState({
+            name,
+            dni,
+            imagen,
+            verificado,
+            admin,
+            imgP
+        })
+        await User.getOnlyData(dni,async (d,user)=>{
             if(d){
                 try{
-                    console.log('holaa')
                     await AsyncStorage.mergeItem(
                         '@UserData',
                         JSON.stringify(user)
@@ -37,6 +51,12 @@ class login extends Component{
     }
     async data(){
         let {name,dni,imagen,verificado,admin,imgP} = JSON.parse(await AsyncStorage.getItem('@UserData'));
+        this.name=name;
+        this.dni = dni;
+        this.imagen=imagen;
+        this.verificado=verificado;
+        this.admin=admin;
+        this.imgP=imgP
         this.setState({
             name,
             dni,
@@ -45,9 +65,10 @@ class login extends Component{
             admin,
             imgP
         })
+        
     }
     render(){
-        let {name,dni,verificado,admin,imgP,seguimiento} = this.state;
+        let {name,dni,verificado,admin} = this.state;
         //this.getData();
         var noticias = [];
         for (let i = 0; i < 5; i++) {
@@ -57,7 +78,7 @@ class login extends Component{
                 }
             ) 
         }
-        let link =`https://adordni.ml/img/${imgP}`;
+        let link =`https://adordni.ml/img/${this.imgP}`;
         return (
             
             <View style = {{flex:1}}>

@@ -24,7 +24,7 @@ class User{
       });
     
     const data = await querry.json();
-    if(null !== data['err']){
+    if(null != data['err']){
       if(data['err'] === true){
         fn(false,null);
       }
@@ -38,7 +38,6 @@ class User{
     
   }
   async changeUser(dni,name,usern,seg,segold,fn){
-    console.log(dni,name,seg,usern)
     const querry = await fetch(`${pagina}/users/changeUser`,{
       method:'POST',
       body: JSON.stringify({dni,name,usern,seg,segold}),
@@ -70,6 +69,29 @@ class User{
     }else{
       fn(false);
     }   
+  }
+  async getOnlyData(dni,fn){
+    let querry = await fetch(`${pagina}/users/getData`, {
+      method: 'POST',
+      body: JSON.stringify({dni}),
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      }
+    });
+  
+  const data = await querry.json();
+  if(null != data['err']){
+    if(data['err'] === true){
+      fn(false,null);
+    }
+  }else{
+    if(null !== data['user']){
+      fn(true,data['user']);
+    }else{
+      fn(false,null);
+    }
+  }
   }
   async allnews(fn){
     const querry = await fetch(`${pagina}/news`,{
