@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Image,ScrollView} from 'react-native';
+import { StyleSheet, Text, View, Image,ScrollView,RefreshControl} from 'react-native';
 import User from '../components/user';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import AsyncStorage  from '@react-native-community/async-storage' 
@@ -7,10 +7,19 @@ import { Header } from 'react-native-elements';
 class News extends Component{
     constructor(props){
         super(props);
-        this.noticias = [{"_id":"5f75b6776ae56408e8adf3aa","title":"Bienvenido","text":"Gracias por utilizar esta aplicacion","author":{"verificado":true,"admin":true,"_id":"5f24a4e9ac12c01e74455404","username":"AgustLuj","name":"Topodorni","dni":"111239"},"Date":"2020-10-01T10:59:03.610Z","__v":0},{"_id":"5f75b6766ae56408e8adf3a8","title":"Bienvenido","text":"Gracias por utilizar esta aplicacion","author":{"verificado":true,"admin":true,"_id":"5f24a4e9ac12c01e74455404","username":"AgustLuj","name":"Topodorni","dni":"111239"},"Date":"2020-10-01T10:59:02.302Z","__v":0},{"_id":"5f75b6746ae56408e8adf3a6","title":"Bienvenido","text":"Gracias por utilizar esta aplicacion","author":{"verificado":true,"admin":true,"_id":"5f24a4e9ac12c01e74455404","username":"AgustLuj","name":"Topodorni","dni":"111239"},"Date":"2020-10-01T10:59:00.647Z","__v":0},{"_id":"5f75b6736ae56408e8adf3a4","title":"Bienvenido","text":"Gracias por utilizar esta aplicacion","author":{"verificado":true,"admin":true,"_id":"5f24a4e9ac12c01e74455404","username":"AgustLuj","name":"Topodorni","dni":"111239"},"Date":"2020-10-01T10:58:59.364Z","__v":0},{"_id":"5f75b6716ae56408e8adf3a2","title":"Bienvenido","text":"Gracias por utilizar esta aplicacion","author":{"verificado":true,"admin":true,"_id":"5f24a4e9ac12c01e74455404","username":"AgustLuj","name":"Topodorni","dni":"111239"},"Date":"2020-10-01T10:58:57.172Z","__v":0},{"_id":"5f75b66f6ae56408e8adf3a0","title":"Bienvenido","text":"Gracias por utilizar esta aplicacion","author":{"verificado":true,"admin":true,"_id":"5f24a4e9ac12c01e74455404","username":"AgustLuj","name":"Topodorni","dni":"111239"},"Date":"2020-10-01T10:58:55.569Z","__v":0},{"_id":"5f75b66e6ae56408e8adf39e","title":"Bienvenido","text":"Gracias por utilizar esta aplicacion","author":{"verificado":true,"admin":true,"_id":"5f24a4e9ac12c01e74455404","username":"AgustLuj","name":"Topodorni","dni":"111239"},"Date":"2020-10-01T10:58:54.010Z","__v":0},{"_id":"5f75b66c6ae56408e8adf39c","title":"Bienvenido","text":"Gracias por utilizar esta aplicacion","author":{"verificado":true,"admin":true,"_id":"5f24a4e9ac12c01e74455404","username":"AgustLuj","name":"Topodorni","dni":"111239"},"Date":"2020-10-01T10:58:52.461Z","__v":0},{"_id":"5f75b66a6ae56408e8adf39a","title":"Bienvenido","text":"Gracias por utilizar esta aplicacion","author":{"verificado":true,"admin":true,"_id":"5f24a4e9ac12c01e74455404","username":"AgustLuj","name":"Topodorni","dni":"111239"},"Date":"2020-10-01T10:58:50.446Z","__v":0},{"_id":"5f75b6686ae56408e8adf398","title":"Bienvenido","text":"Gracias por utilizar esta aplicacion","author":{"verificado":true,"admin":true,"_id":"5f24a4e9ac12c01e74455404","username":"AgustLuj","name":"Topodorni","dni":"111239"},"Date":"2020-10-01T10:58:48.734Z","__v":0}]
+        this.loadNews();
+        this.noticias = [];
         this.state = {
-
+            cargando : true,
         }
+    }
+    _onRefresh = () => {
+        this.setState({refreshing: true});
+        this.setState({cargando:true})
+        this.noticias = []
+        this.loadNews(()=>{
+            this.setState({refreshing: false});
+        });
     }
     async componentDidMount(){
         const {name,dni,imagen,verificado,admin} =JSON.parse(await AsyncStorage.getItem('@UserData'));
@@ -22,25 +31,25 @@ class News extends Component{
             admin
         })
         
-        /*User.allnews((err,d)=>{
+        
+    }
+    async loadNews(fn){
+        await User.newsHome((err,d)=>{
             if(err){
                 this.setState({'errg':true});
-            }else{
-                console.log(d[0].tittle)
+            }else{  
+                d.forEach(element => {
+                    this.noticias.push(element);
+                    this.setState({cargando:true})
+                });
+                this.setState({cargando:false})
             }
-        })*/
+        });
+        fn()
     }
     render(){
         
-        let {name,dni,imagen,verificado,admin,errg} = this.state;
-        /*for (let i = 0; i < 10; i++) {
-            noticias.push(
-                <View style = {{flex: 1,backgroundColor: 'white',flexDirection: 'column',borderBottomWidth:1,borderBottomColor:'black' }}>
-                    <Text style={styles.ttitle}>Anuncio de Marcha</Text>
-                    <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('5%')}}>El dia 8 de noviembre se va a realizar una marcha en el obelsico y en cada parte de argentina no sean tibios y vayan</Text>
-                </View>
-            ) 
-        }*/
+        let {errg,cargando} = this.state;
         /*<ScrollView style={{flex: 1,backgroundColor: 'white',flexDirection: 'column'}}>
                         <View style = {{flex: 1,backgroundColor: 'white',borderBottomWidth:1,borderBottomColor:'black' }}>
                                 <Text style={styles.ttitle}>Encuenta</Text>
@@ -66,22 +75,34 @@ class News extends Component{
                 />
                 <View style = {{flex: 1,backgroundColor: 'white',flexDirection: 'column'}}>
                     {errg?<Text style={{color:'red'}}>Algo Salio mal intentar nuevamente</Text>:null}
-                    <ScrollView style={{flex: 1,backgroundColor: 'white',flexDirection: 'column'}}>
-                        <View style = {{flex: 1,backgroundColor: 'white',borderBottomWidth:1,borderBottomColor:'black' }}>
-                                <Text style={styles.ttitle}>Encuenta</Text>
-                                <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('5%')}}>Vota al mejor</Text>
-                                <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('8%')}}>Impresoradorni</Text>  
-                                <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('8%')}}>General blanoc</Text>  
-                                <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('8%')}}>che Adorni</Text>    
-                                <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('8%')}}>Adorni Enojado</Text> 
-                        </View>
-                        {this.noticias.map(({title,text})=>{
-                            return(
-                            <View style = {{flex: 1,backgroundColor: 'white',flexDirection: 'column',borderBottomWidth:1,borderBottomColor:'black' }}>
-                                <Text style={styles.ttitle}>{title}</Text>
-                                <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('5%')}}>{text}</Text>
-                            </View>
-                            )
+                    <ScrollView style={{flex: 1,backgroundColor: 'white',flexDirection: 'column'}} refreshControl={
+                        <RefreshControl
+                            refreshing={this.state.refreshing}
+                            onRefresh={this._onRefresh}
+                        />
+                        }>
+                        {(cargando)?<Text style={styles.ttitle}>Cargando</Text> : null}
+                        {this.noticias.map(({title,text,type,options})=>{
+                            if(type == 1){
+                                return(
+                                    <View style = {{flex: 1,backgroundColor: 'white',borderBottomWidth:1,borderBottomColor:'black' }}>
+                                            <Text style={styles.ttitle}>Encuenta</Text>
+                                            <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('5%')}}>{text}</Text>
+                                            {options.candidates.map(candidate =>{
+                                                return(
+                                                    <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('8%')}}>{candidate.text}</Text>  
+                                                )
+                                            })}
+                                    </View>
+                                    )
+                            }else if(type == 0){
+                                return(
+                                    <View style = {{flex: 1,backgroundColor: 'white',flexDirection: 'column',borderBottomWidth:1,borderBottomColor:'black' }}>
+                                        <Text style={styles.ttitle}>{title}</Text>
+                                        <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('5%')}}>{text}</Text>
+                                    </View>
+                                    )   
+                            }
                         })}
                     </ScrollView> 
                 </View>

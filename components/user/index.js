@@ -24,10 +24,8 @@ class User{
       });
     
     const data = await querry.json();
-    if(null != data['err']){
-      if(data['err'] === true){
-        fn(false,null);
-      }
+    if(querry.status != 200){
+      fn(false,null);
     }else{
       if(null !== data['user']){
         fn(true,data['user']);
@@ -46,12 +44,13 @@ class User{
         'Content-Type':'application/json',
       }
     });
+    
     const data = await querry.json();
-    if(data['err'] === true){
-      fn(true);
-    }else{
+    if(querry.status != 200){
       fn(false);
-    } 
+    }else{
+      fn(true);
+    }
   }
   async checkPass(dni,seg,fn){
     //console.log(dni,seg)
@@ -64,11 +63,11 @@ class User{
       }
     });
     const data = await querry.json();
-    if(data['err'] === true){
-      fn(true);
-    }else{
+    if(querry.status != 200){
       fn(false);
-    }   
+    }else{
+      fn(true);
+    } 
   }
   async getOnlyData(dni,fn){
     let querry = await fetch(`${pagina}/users/getData`, {
@@ -79,22 +78,21 @@ class User{
         'Content-Type': 'application/json'
       }
     });
-  
-  const data = await querry.json();
-  if(null != data['err']){
-    if(data['err'] === true){
-      fn(false,null);
-    }
-  }else{
-    if(null !== data['user']){
-      fn(true,data['user']);
+    const data = await querry.json();
+    if(querry.status != 200){
+      if(data['err'] === true){
+        fn(false,null);
+      }
     }else{
-      fn(false,null);
+      if(null !== data['user']){
+        fn(true,data['user']);
+      }else{
+        fn(false,null);
+      }
     }
-  }
   }
   async allnews(fn){
-    const querry = await fetch(`${pagina}/news`,{
+    const querry = await fetch(`${pagina}/news/allNews`,{
       method:'GET',
       headers:{
         Accept:'application/json',
@@ -103,7 +101,29 @@ class User{
     });
     const data = await querry.json();
     //console.log(data)
-    fn(false,data)
+    if(querry.status != 200){
+      fn(false);
+    }else{
+      fn(false,data)
+    } 
+    
+  }
+  async newsHome(fn){
+    const querry = await fetch(`${pagina}/news/screenHome`,{
+      method:'GET',
+      headers:{
+        Accept:'application/json',
+        'Content-Type':'application/json',
+      }
+    });
+    const data = await querry.json();
+    //console.log(data)
+    if(querry.status != 200){
+      fn(false);
+    }else{
+      fn(false,data)
+    } 
+    
   }
 }
 export default new User;

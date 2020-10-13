@@ -1,35 +1,60 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Image,ScrollView} from 'react-native';
+import { StyleSheet, Text, View, Image,ScrollView,RefreshControl } from 'react-native';
 import User from '../components/user';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import AsyncStorage  from '@react-native-community/async-storage' 
 import { Header } from 'react-native-elements';
+speed();
+var userData;
+async function speed (){
+    userData = JSON.parse(await AsyncStorage.getItem('@UserData'))
+}
 class login extends Component{
     constructor(props){
         super(props);
-        this.name='';
-        this.dni = '';
-        this.imagen='';
-        this.verificado=''
-        this.admin=''
-        this.imgP=''
-
-        this.data();
+        this.loadNews();
+        //this.data();
+        this.noticias = [];
+        this.name=userData.name;
+        this.dni =userData.dni;
+        this.imagen=userData.imagen;
+        this.verificado=userData.verificado;
+        this.admin=userData.admin;
+        this.imgP=userData.imgP;
         this.state = {
-
+            cargando:true,
+            name:userData.name,
+            dni: userData.dni,
+            imagen: userData.imagen,
+            verificado: userData.verificado,
+            admin: userData.admin,
+            imgP:userData.imgP
         }
     }
+    _onRefresh = () => {
+        this.setState({refreshing: true});
+        this.setState({cargando:true})
+        this.noticias = []
+        this.loadNews(()=>{
+            this.setState({refreshing: false});
+        });
+    }
+    async loadNews(fn){
+        await User.newsHome((err,d)=>{
+            if(err){
+                this.setState({'errg':true});
+            }else{
+                d.forEach(element => {
+                    this.noticias.push(element);
+                    this.setState({cargando:true})
+                });
+                this.setState({cargando:false})
+            }
+        });
+        fn()
+    }
     async componentDidMount(){
-        let {name,dni,imagen,verificado,admin,imgP} = JSON.parse(await AsyncStorage.getItem('@UserData'));
-        this.setState({
-            name,
-            dni,
-            imagen,
-            verificado,
-            admin,
-            imgP
-        })
-        await User.getOnlyData(dni,async (d,user)=>{
+        await User.getOnlyData(this.dni,async (d,user)=>{
             if(d){
                 try{
                     await AsyncStorage.mergeItem(
@@ -68,16 +93,8 @@ class login extends Component{
         
     }
     render(){
-        let {name,dni,verificado,admin} = this.state;
+        let {name,dni,verificado,admin,cargando} = this.state;
         //this.getData();
-        var noticias = [];
-        for (let i = 0; i < 5; i++) {
-            noticias.push({
-                title:'Anuncio de Marcha',
-                text:'El dia 8 de noviembre se va a realizar una marcha en el obelsico y en cada parte de argentina no sean tibios y vayan'
-                }
-            ) 
-        }
         let link =`https://adordni.ml/img/${this.imgP}`;
         return (
             
@@ -91,7 +108,7 @@ class login extends Component{
                         justifyContent: 'space-around',
                     }}
                 />
-                <View style = {{flex: 1,backgroundColor: 'white',flexDirection: 'column'}}>
+                <View style = {{flex: 1,backgroundColor: 'white',flexDirection: 'column'}} >
                     <View style = {{flex: 0.9,backgroundColor: 'white',flexDirection: 'row'}}>
                         <View style = {{flex: 1,backgroundColor: 'white',flexDirection: 'row'}}>
                         <Image 
@@ -112,14 +129,34 @@ class login extends Component{
                         <Text style={{color:'black',fontSize:hp('3.5%'),marginTop:hp('1%')}}>Noticias</Text>                       
                     </View>
                     <View style = {{flex: 2.3,backgroundColor: 'white',flexDirection: 'column'}}>
-                    <ScrollView style={{flex: 1,backgroundColor: 'white',flexDirection: 'column'}}>
-                        {noticias.map(({title,text})=>{
-                            return(
-                            <View style = {{flex: 1,backgroundColor: 'white',flexDirection: 'column',borderBottomWidth:1,borderBottomColor:'black' }}>
-                                <Text style={styles.ttitle}>{title}</Text>
-                                <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('5%')}}>{text}</Text>
-                            </View>
-                            )
+                    <ScrollView style={{flex: 1,backgroundColor: 'white',flexDirection: 'column'}} refreshControl={
+                        <RefreshControl
+                            refreshing={this.state.refreshing}
+                            onRefresh={this._onRefresh}
+                        />
+                        }>
+                        {(cargando)?<Text style={styles.ttitle}>Cargando</Text> : null}
+                        {this.noticias.map(({title,text,type,options})=>{
+                            if(type == 1){
+                                return(
+                                    <View style = {{flex: 1,backgroundColor: 'white',borderBottomWidth:1,borderBottomColor:'black' }}>
+                                            <Text style={styles.ttitle}>Encuenta</Text>
+                                            <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('5%')}}>{text}</Text>
+                                            {options.candidates.map(candidate =>{
+                                                return(
+                                                    <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('8%')}}>{candidate.text}</Text>  
+                                                )
+                                            })}
+                                    </View>
+                                    )
+                            }else if(type == 0){
+                                return(
+                                    <View style = {{flex: 1,backgroundColor: 'white',flexDirection: 'column',borderBottomWidth:1,borderBottomColor:'black' }}>
+                                        <Text style={styles.ttitle}>{title}</Text>
+                                        <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('5%')}}>{text}</Text>
+                                    </View>
+                                    )   
+                            }
                         })}
                     </ScrollView>
                         
