@@ -4,14 +4,31 @@ import User from '../components/user';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import AsyncStorage  from '@react-native-community/async-storage' 
 import { Header } from 'react-native-elements';
+import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 class News extends Component{
     constructor(props){
         super(props);
-        this.loadNews();
+        this.loadNews(()=>{
+            return null;
+        });
         this.noticias = [];
         this.state = {
             cargando : true,
         }
+    }
+    async loadNews(fn){
+        await User.newsHome((err,d)=>{
+            if(!err){
+                this.setState({'errg':true});
+            }else{  
+                d.forEach(element => {
+                    this.noticias.push(element);
+                    this.setState({cargando:true})
+                });
+                this.setState({cargando:false})
+            }
+        });
+        fn()
     }
     _onRefresh = () => {
         this.setState({refreshing: true});
@@ -33,20 +50,7 @@ class News extends Component{
         
         
     }
-    async loadNews(fn){
-        await User.newsHome((err,d)=>{
-            if(err){
-                this.setState({'errg':true});
-            }else{  
-                d.forEach(element => {
-                    this.noticias.push(element);
-                    this.setState({cargando:true})
-                });
-                this.setState({cargando:false})
-            }
-        });
-        fn()
-    }
+    
     render(){
         
         let {errg,cargando} = this.state;
@@ -81,29 +85,36 @@ class News extends Component{
                             onRefresh={this._onRefresh}
                         />
                         }>
-                        {(cargando)?<Text style={styles.ttitle}>Cargando</Text> : null}
-                        {this.noticias.map(({title,text,type,options})=>{
+                        {(cargando)?<Text style={styles.ttitle}>{errg?<Text style={{color:'red'}}>Algo Salio mal intentar nuevamente</Text>:'Cargando'}</Text> : this.noticias.map(({title,text,type,options},i)=>{
                             if(type == 1){
                                 return(
-                                    <View style = {{flex: 1,backgroundColor: 'white',borderBottomWidth:1,borderBottomColor:'black' }}>
+                                    <View key={i} style = {{flex: 1,backgroundColor: 'white',borderBottomWidth:1,borderBottomColor:'black' }}>
                                             <Text style={styles.ttitle}>Encuenta</Text>
                                             <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('5%')}}>{text}</Text>
-                                            {options.candidates.map(candidate =>{
-                                                return(
-                                                    <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('8%')}}>{candidate.text}</Text>  
-                                                )
-                                            })}
+                                            <RadioForm
+                                                radio_props={options.candidates}
+                                                initial={-1}
+                                                formHorizontal={false}
+                                                labelHorizontal={true}
+                                                buttonColor={'#f6b93b'}
+                                                selectedButtonColor ={'#f6b93b'}
+                                                style={{marginLeft:hp('5%'),marginTop:hp('2%'),marginBottom:hp('1%')}}
+                                                animation={true}
+                                                accessible={false}
+                                                onPress={(value) => console.log(value)}
+                                                />
+                                            
                                     </View>
                                     )
                             }else if(type == 0){
                                 return(
-                                    <View style = {{flex: 1,backgroundColor: 'white',flexDirection: 'column',borderBottomWidth:1,borderBottomColor:'black' }}>
+                                    <View key={i} style = {{flex: 1,backgroundColor: 'white',flexDirection: 'column',borderBottomWidth:1,borderBottomColor:'black' }}>
                                         <Text style={styles.ttitle}>{title}</Text>
                                         <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('5%')}}>{text}</Text>
                                     </View>
                                     )   
                             }
-                        })}
+                        })} 
                     </ScrollView> 
                 </View>
             </View>

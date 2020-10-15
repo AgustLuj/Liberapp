@@ -93,7 +93,7 @@ class User{
   }
   async allnews(fn){
     const querry = await fetch(`${pagina}/news/allNews`,{
-      method:'GET',
+      method:'POST',
       headers:{
         Accept:'application/json',
         'Content-Type':'application/json',
@@ -104,13 +104,13 @@ class User{
     if(querry.status != 200){
       fn(false);
     }else{
-      fn(false,data)
+      fn(true,data)
     } 
     
   }
   async newsHome(fn){
     const querry = await fetch(`${pagina}/news/screenHome`,{
-      method:'GET',
+      method:'POST',
       headers:{
         Accept:'application/json',
         'Content-Type':'application/json',
@@ -121,7 +121,25 @@ class User{
     if(querry.status != 200){
       fn(false);
     }else{
-      fn(false,data)
+      fn(true,data)
+    } 
+    
+  }
+  async userVote(idU,idV,fn){
+    const querry = await fetch(`${pagina}/votes/userVote`,{
+      method:'POST',
+      body:JSON.stringify({idU,idV}),
+      headers:{
+        Accept:'application/json',
+        'Content-Type':'application/json',
+      }
+    });
+    const data = await querry.json();
+    //console.log(data)
+    if(querry.status != 200){
+      fn(false);
+    }else{
+      fn(true,data)
     } 
     
   }
