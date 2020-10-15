@@ -1,5 +1,5 @@
-//const pagina = 'http://192.168.100.42/users/';
-const pagina = 'http://192.168.100.42:3000';
+const pagina = 'http://adordni.ml/';
+//const pagina = 'http://192.168.100.42:3000';
 
 class User{
   async online(fn){

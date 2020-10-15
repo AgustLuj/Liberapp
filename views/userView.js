@@ -93,10 +93,10 @@ class login extends Component{
         })
     }
     async userVote(id,i,j){
+        console.log(id);
         User.userVote(this._id,id,(err, d)=>{
-            this.noticias[i]=d[0]
-            //console.log(this.noticias[i].options);
-            this.setState({f:true})
+            //console.log(d);
+            this.noticias[i]=d;
             setTimeout(()=>{
                 this.setState({f:false})
             },800)
