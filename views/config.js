@@ -19,7 +19,6 @@ class login extends Component{
         this.segRegex=/\d\d\d\d-\d\d\d\d/
 
         this.state = {
-
         }
     }
     async componentDidMount(){
@@ -99,9 +98,8 @@ class login extends Component{
                 <View style = {{flex:1}}>
                     <Header
                         placement="left"
-                        leftComponent={{ icon: 'home',style: {}, color: '#fff' ,onPress: () => this.props.navigation.navigate('Home'),}}
+                        leftComponent={{ icon: 'arrow-back',style: {}, color: '#fff' ,onPress: () => this.props.navigation.goBack(),}}
                         centerComponent={{ text: 'Configuracion', style: { color: '#fff',fontSize:hp('3.5%'), } }}
-                        rightComponent={{ icon: 'menu', color: '#fff',onPress: () => this.props.navigation.openDrawer(), }}
                         containerStyle={{
                             backgroundColor: '#f6b93b',
                             justifyContent: 'space-around',

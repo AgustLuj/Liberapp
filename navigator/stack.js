@@ -3,7 +3,7 @@ import { View, TouchableOpacity, Text, Image,Button } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer, CommonActions ,StackActions } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Header } from 'react-native-elements';
+import { Header,ListItem, Icon } from 'react-native-elements';
 import {
 	createDrawerNavigator,
 	DrawerContentScrollView,
@@ -11,10 +11,11 @@ import {
 	DrawerItem,
   } from '@react-navigation/drawer';
 import AsyncStorage  from '@react-native-community/async-storage';
-import { ListItem, Icon } from 'react-native-elements'
+import Routes from './stackRoutes';
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+
 speed();
 var userData;
-import Routes from './stackRoutes';
 async function speed (){
     userData = JSON.parse(await AsyncStorage.getItem('@UserData'))
 }
@@ -27,49 +28,32 @@ const Stack = createStackNavigator();
 const Options = createStackNavigator();
 
 
-function Feed(route) {
-	const list = [
-		{
-		  title: 'Appointments',
-		  icon: 'av-timer'
-		},
-		{
-		  title: 'Trips',
-		  icon: 'flight-takeoff'
-		},
-	  ]
+function Options_List({ navigation }) {
 	return (
-		<View>
-		{
-		  list.map((item, i) => (
-			<ListItem key={i} bottomDivider>
-			  <Icon name={item.icon} />
-			  <ListItem.Content>
-				<ListItem.Title>{item.title}</ListItem.Title>
-			  </ListItem.Content>
-			  <ListItem.Chevron />
-			</ListItem>
-		  ))
-		}
-	  </View>
-	);
-}
-function Test({ navigation }) {
-	return (
-		<Options.Navigator>
-		<Options.Screen
-			name="Home"
-			component={Feed}
-		/>
-		<Options.Screen
-			name="Config"
-			component={Routes.Config}
-			options={{
-				title: 'LiberApp',
-				headerShown: false,
-			  }}
-		/>
-	</Options.Navigator>
+		<View style = {{flex:1}}>
+			<Options.Navigator>
+				<Options.Screen
+					name="Home"
+					component={Routes.List_Options}
+					options={{
+						title: 'LiberApp',
+						headerShown: false,
+					}}
+				/>
+				<Options.Screen
+					name="Config"
+					component={Routes.Config}
+					options={{
+						title: 'LiberApp',
+						headerShown: false,
+					}}
+				/>
+				<Options.Screen
+					name="Test"
+					component={Routes.Config}
+				/>
+			</Options.Navigator>
+	</View>
 	);
 }
 async function deleteSession(fn){
@@ -84,6 +68,13 @@ function CustomDrawerContent(props) {
 	return (
 	  <DrawerContentScrollView {...props}>
 		<DrawerItemList {...props} />
+		<DrawerItem
+		  label="Options"
+		  onPress={async () =>{
+			props.navigation.closeDrawer(),
+			props.navigation.navigate('Options')
+		  }}
+		/>
 		<DrawerItem
 		  label="Cerrar sesion"
 		  onPress={async () =>{
@@ -101,22 +92,9 @@ function CustomDrawerContent(props) {
 					});
 				}
 			})
-		
-		
-			
-			
-			/*props.navigation.reset({
-				index: 0
-			})*/
-			/*const resetAction = props.navigation.reset({
-				index: 0,
-				actions: [props.navigation.navigate({ routeName: 'Login' })],
-			  });
-		  
-			this.props.navigation.dispatch(resetAction);*/
-			
 		  }}
 		/>
+		
 		
 	  </DrawerContentScrollView>
 	);
@@ -136,6 +114,9 @@ class drawerScreen extends Component{
 		this.verificado=verificado;
 	}
     render(){
+		//<Drawer.Screen name="Opciones" component={Options_List} />
+		//{!this.verificado?<Drawer.Screen name="Verificaciones" component={Feed} /> :null}
+		//<Drawer.Screen name="Configuracion" component={Routes.Config} />
 		return (
 			<Drawer.Navigator drawerPosition="right" drawerContentOptions={{
 				//activeBackgroundColor:'#f6b93b',
@@ -145,9 +126,6 @@ class drawerScreen extends Component{
 			<Drawer.Screen name="Carnet" component={Routes.Dni} />
 			<Drawer.Screen name="Noticias" component={Routes.News}/>
 			<Drawer.Screen name="Votaciones" component={Routes.Votes} />
-			<Drawer.Screen name="Opciones" component={Test} />
-			<Drawer.Screen name="Configuracion" component={Routes.Config} />
-			{!this.verificado?<Drawer.Screen name="Verificaciones" component={Feed} /> :null} 
 			</Drawer.Navigator>
 		);
 	}
@@ -201,6 +179,14 @@ class AppStack extends Component{
 					<Stack.Screen
 						name="Tabs"
 						component={drawerScreen}
+						options={{
+							title: 'LiberApp',
+							headerShown: false,
+						  }}
+					/>
+					<Stack.Screen
+						name="Options"
+						component={Options_List}
 						options={{
 							title: 'LiberApp',
 							headerShown: false,
