@@ -1,4 +1,4 @@
-const pagina = 'http://adordni.ml/';
+const pagina = 'https://adordni.ml';
 //const pagina = 'http://192.168.100.42:3000';
 
 class User{

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, View,TextInput,TouchableOpacity } from 'react-native';
 import User from '../components/user';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import AsyncStorage  from '@react-native-community/async-storage' 
+import AsyncStorage  from '@react-native-community/async-storage' ;
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Input, Text, Button } from 'react-native-elements';
 class login extends Component{
@@ -26,13 +26,15 @@ class login extends Component{
                     User.getData(this.dni,this.seg,async (d,user)=>{
                         if(d){
                             try{
+                                if(null != await AsyncStorage.getItem('@UserData')){
+                                    await AsyncStorage.removeItem('@UserData');
+                                }
                                 await AsyncStorage.setItem(
                                     '@UserData',
                                     JSON.stringify(user)
                                 );
-                                const value = await AsyncStorage.getItem('name');
-                                if(value !== 'null'){
-                                    this.props.navigation.replace('Tabs' )
+                                if(null != await AsyncStorage.getItem('@UserData')){
+                                    this.props.navigation.replace('Tabs' );
                                 }
                             }catch{
                                 this.setState({'errg':true})

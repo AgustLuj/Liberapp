@@ -8,7 +8,7 @@ import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-
 import * as Progress from 'react-native-progress';
 
 speed();
-var userData;
+let userData;
 async function speed (){
     userData = JSON.parse(await AsyncStorage.getItem('@UserData'))
 }
@@ -18,10 +18,9 @@ class login extends Component{
         this.loadNews(()=>{
             this.setState({value:11})
         });
-        //this.data();
         this.noticias = [];
         this.name=userData.name;
-        this._id=userData._id
+        this._id=userData._id;
         this.dni =userData.dni;
         this.imagen=userData.imagen;
         this.verificado=userData.verificado;
@@ -45,16 +44,19 @@ class login extends Component{
             if(!err){
                 this.setState({'errg':true});
             }else{
+                
                 d.forEach(element => {
                     if(element !=  null){
-                        element.options.candidates.forEach(({_id},i)=>{
-                            element.options.candidates[i].value=_id
-                        })
-                    }
-                    this.noticias.push(element);
-                    this.setState({cargando:true})
-                    
+                        if(null != element.options){
+                            element.options.candidates.forEach(({_id},i)=>{
+                                element.options.candidates[i].value=_id
+                            })
+                        }
+                        this.noticias.push(element);
+                        this.setState({cargando:true})
+                    }  
                 });
+                
                 setTimeout(()=>{
                     this.setState({f:false})
                 },800)
@@ -72,25 +74,7 @@ class login extends Component{
         });
     }
     async componentDidMount(){
-        await User.getOnlyData(this.dni,async (d,user)=>{
-            if(d){
-                try{
-                    await AsyncStorage.mergeItem(
-                        '@UserData',
-                        JSON.stringify(user)
-                      );
-                    /*await AsyncStorage.setItem(
-                        '@UserData',
-                        JSON.stringify(user)
-                    );*/
-                    this.data()
-                }catch{
-                    this.data()
-                }
-            }else{
-                this.data()
-            }
-        })
+        this.data();
     }
     async userVote(id,i,j){
         console.log(id);
@@ -147,6 +131,8 @@ class login extends Component{
                     containerStyle={{
                         backgroundColor: '#f6b93b',
                         justifyContent: 'space-around',
+                        borderBottomColor:'#bdc3c7',
+                        borderBottomWidth:1
                     }}
                 />
                 <View style = {{flex: 1,backgroundColor: 'white',flexDirection: 'column'}} >
@@ -160,16 +146,18 @@ class login extends Component{
                         </View>
                         <View style = {{flex: 1.45,backgroundColor: 'white',flexDirection: 'column'}}>
                             <Text style={styles.ttitle}>Bienvenido!!</Text>    
-                            <Text style={styles.text}>{name}</Text>
-                            <Text style={styles.text}>Tu dni es:{dni}</Text>
-                            {!verificado?<Text style={styles.text}>No esta verificado</Text> :null} 
-                            {admin?<Text style={styles.text}>Sos Admin</Text> :null} 
+                            <Text style={styles.text}>{this.name}</Text>
+                            <Text style={styles.text}>Tu dni es:{this.dni}</Text>
+                            <Text style={styles.text}>LiberCoins: 1000</Text>
+                            {!this.verificado?<Text style={styles.text}>No esta verificado</Text> :null} 
+                            {this.admin?<Text style={styles.text}>Sos Admin</Text> :null} 
+                            
                         </View>
                     </View>
-                    <View style = {{flex: 0.2,backgroundColor: 'white',flexDirection: 'row', borderBottomWidth:2,borderBottomColor:'black'}}>
-                        <Text style={{color:'black',fontSize:hp('3.5%'),marginTop:hp('1%')}}>Noticias</Text>                       
+                    <View style = {{flex: 0.3,backgroundColor: 'white',flexDirection: 'row', borderTopWidth:3,borderTopColor:'#7f8c8d'}}>
+                        <Text style={{color:'black',fontSize:hp('5%'),marginTop:hp('1%')}}>Noticias</Text>                       
                     </View>
-                    <View style = {{flex: 2.3,backgroundColor: 'white',flexDirection: 'column'}}>
+                    <View style = {{flex: 2.3,backgroundColor: 'white',flexDirection: 'column',marginLeft:hp('1.5%')}}>
                     <ScrollView style={{flex: 1,backgroundColor: 'white',flexDirection: 'column'}} refreshControl={
                         <RefreshControl
                             refreshing={this.state.refreshing}
@@ -181,7 +169,7 @@ class login extends Component{
                         this.noticias.map(({title,text,type,options},i)=>{
                             if(type == 1){
                                 return(
-                                    <View key={i} style = {{flex: 1,backgroundColor: 'white',borderBottomWidth:1,borderBottomColor:'black' }}>
+                                    <View key={i} style = {{flex: 1,backgroundColor: 'white',borderBottomWidth:1,borderBottomColor:'black',paddingBottom:hp('2%')}}>
                                             <Text style={styles.ttitle}>Encuesta</Text>
                                             <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('5%')}}>{text}</Text>
                                             {(options.users.findIndex(({id}) => id == _id )) === -1 ? <RadioForm
@@ -217,7 +205,7 @@ class login extends Component{
                                         </RadioForm>:
                                             options.candidates.map((obj, j) =>{
                                                 return(
-                                                <View>
+                                                <View key={j}>
                                                     <Text style={{color:'black',fontSize:hp('2.5%'),marginLeft:hp('5%')}}>{obj.label}</Text>
                                                     <Progress.Bar key={j} progress={(f)?0:(options.votes === 0 )?0:obj.vote/options.votes} width={wp('85%')} color={'#f6b93b'} style={{marginLeft:hp('5%'),marginTop:hp('0.5%'),marginBottom:hp('1%')}} animationType={'spring'}/>
                                                 </View>
@@ -230,7 +218,7 @@ class login extends Component{
                                 )
                             }else if(type == 0){
                                 return(
-                                    <View key={i} style = {{flex: 1,backgroundColor: 'white',flexDirection: 'column',borderBottomWidth:1,borderBottomColor:'black' }}>
+                                    <View key={i} style = {{flex: 1,backgroundColor: 'white',flexDirection: 'column',borderBottomWidth:1,borderBottomColor:'black',paddingBottom:hp('2%') }}>
                                         <Text style={styles.ttitle}>{title}</Text>
                                         <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('5%')}}>{text}</Text>
                                     </View>
@@ -265,8 +253,6 @@ const styles = StyleSheet.create({
     dni:{
         height: hp('23%'), 
         width: wp('40%'),
-        borderWidth:1,
-        borderColor:'black',
     },
     text:{
         color:'black',

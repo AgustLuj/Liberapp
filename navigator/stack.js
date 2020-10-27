@@ -10,45 +10,76 @@ import {
 	DrawerItemList,
 	DrawerItem,
   } from '@react-navigation/drawer';
-import AsyncStorage  from '@react-native-community/async-storage' 
-// Screen
+import AsyncStorage  from '@react-native-community/async-storage';
+import { ListItem, Icon } from 'react-native-elements'
+speed();
+var userData;
 import Routes from './stackRoutes';
+async function speed (){
+    userData = JSON.parse(await AsyncStorage.getItem('@UserData'))
+}
+// Screen
 
 
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
+const Options = createStackNavigator();
 
 
-function Feed({ navigation }) {
+function Feed(route) {
+	const list = [
+		{
+		  title: 'Appointments',
+		  icon: 'av-timer'
+		},
+		{
+		  title: 'Trips',
+		  icon: 'flight-takeoff'
+		},
+	  ]
 	return (
-	  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-		<Text>Feed Screen</Text>
-		<Button title="Open drawer" onPress={() => navigation.openDrawer()} />
-		<Button title="Toggle drawer" onPress={() => navigation.toggleDrawer()} />
+		<View>
+		{
+		  list.map((item, i) => (
+			<ListItem key={i} bottomDivider>
+			  <Icon name={item.icon} />
+			  <ListItem.Content>
+				<ListItem.Title>{item.title}</ListItem.Title>
+			  </ListItem.Content>
+			  <ListItem.Chevron />
+			</ListItem>
+		  ))
+		}
 	  </View>
 	);
 }
-  
-function Notifications({ navigation },{par}) {
-	React.useEffect(() => {
-		const unsubscribe = navigation.addListener('tabPress', e => {
-		  // Prevent default behavior
-		  e.preventDefault();
-		  navigation.openDrawer();
-		  // Do something manually
-		  // ...
-		});
-	
-		return unsubscribe;
-	  }, [navigation]);
-	  return (
-		<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-		  <Text>{(params.type == 1)?'hola':'Prueba'}</Text>
-		</View>
-	  );
-  }
-  
+function Test({ navigation }) {
+	return (
+		<Options.Navigator>
+		<Options.Screen
+			name="Home"
+			component={Feed}
+		/>
+		<Options.Screen
+			name="Config"
+			component={Routes.Config}
+			options={{
+				title: 'LiberApp',
+				headerShown: false,
+			  }}
+		/>
+	</Options.Navigator>
+	);
+}
+async function deleteSession(fn){
+	await AsyncStorage.removeItem('@UserData');
+	if(null == await AsyncStorage.getItem('@UserData')){
+		fn(true)
+	}else{
+		fn(false)
+	}
+}
 function CustomDrawerContent(props) {
 	return (
 	  <DrawerContentScrollView {...props}>
@@ -56,9 +87,24 @@ function CustomDrawerContent(props) {
 		<DrawerItem
 		  label="Cerrar sesion"
 		  onPress={async () =>{
+		
+			deleteSession((d)=>{
+				if(d){
+					props.navigation.replace('LoginFinish')
+				}else{
+					deleteSession((d)=>{
+						if(d()){
+							props.navigation.replace('LoginFinish')
+						}else{
+							props.navigation.replace('Tabs')
+						}
+					});
+				}
+			})
+		
+		
 			
-			await AsyncStorage.removeItem('@UserData');
-			props.navigation.replace('LoginFinish')
+			
 			/*props.navigation.reset({
 				index: 0
 			})*/
@@ -97,9 +143,10 @@ class drawerScreen extends Component{
 			}} drawerContent={props => <CustomDrawerContent {...props} />}>
 			<Drawer.Screen name="Home" component={Routes.UserView}/>
 			<Drawer.Screen name="Carnet" component={Routes.Dni} />
-			<Drawer.Screen name="Configuracion" component={Routes.Config} />
 			<Drawer.Screen name="Noticias" component={Routes.News}/>
-			<Drawer.Screen name="Votaciones" component={Feed} />
+			<Drawer.Screen name="Votaciones" component={Routes.Votes} />
+			<Drawer.Screen name="Opciones" component={Test} />
+			<Drawer.Screen name="Configuracion" component={Routes.Config} />
 			{!this.verificado?<Drawer.Screen name="Verificaciones" component={Feed} /> :null} 
 			</Drawer.Navigator>
 		);
@@ -109,9 +156,11 @@ class drawerScreen extends Component{
 class AppStack extends Component{
     constructor(props){
 		super(props);
+
 		this.state={
-			
+			Route:(null == userData)?Routes.Login:drawerScreen,
 		}
+		
 		this.opt1={
 			headerStyle: {
 			  backgroundColor: '#f4511e',
@@ -137,13 +186,13 @@ class AppStack extends Component{
 	
 	//component={(!d)? Routes.Login:drawerScreen}
     render(){
-		const {d,ver}= this.state;
+		const {Route,ver}= this.state;
         return (
 			<NavigationContainer>
 				<Stack.Navigator>
 					<Stack.Screen
 						name="Login"
-						component={(!d)? Routes.Login:drawerScreen}
+						component={Route}
 						options={{
 							headerShown: false,
 							params:{ver}
