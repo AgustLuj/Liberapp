@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View} from 'react-native';
+import { StyleSheet, View,ScrollView} from 'react-native';
 import User from '../components/user';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import { Header } from 'react-native-elements';
@@ -7,70 +7,37 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Input, Text, Button } from 'react-native-elements';
 import AsyncStorage  from '@react-native-community/async-storage' 
 
-class login extends Component{
+class Search extends Component{
     constructor(props){
         super(props);
         this.name='';
         this.user='';
         this.seg='';
         this.dni='';
-        this.segOld='';
 
+        this.dniregex=/\d\d\d\d\d\d/;
         this.segRegex=/[0-9]*-[0-9]*/;
 
         this.state = {
         }
     }
-    async componentDidMount(){
-        const {name,username,dni,imagen,verificado,admin} =JSON.parse(await AsyncStorage.getItem('@UserData'));
-        this.dni= dni;
-        this.setState({
-            name,
-            username,
-            dni,
-            imagen,
-            verificado,
-            admin
-        })
-    }
-    async changeUser(){
-        await this.checkSeg(this.segOld,async (d)=>{
-            if(d){
-                await User.checkPass(this.dni,this.segOld,async(e)=>{
-                    if(e){
-                        if(this.seg === ''){
-                            this.changeDb(this.dni,this.name,this.user,this.seg,this.segOld);
-                        }else{
-                          await this.checkSeg(this.seg,async(d)=>{
-                            if(d){
-                                this.changeDb(this.dni,this.name,this.user,this.seg,this.segOld);                   
-                            }else{
-                                this.setState({'err2':true})  
-                            }
-                            
-                        });  
-                        }
-                        
-                        
-                    }else{
-                        this.setState({'err':true})
-                    }  
-                })
+    async searchUser(){
+        if(this.dni != ''&& this.dniregex.test(this.dni)){
+            this.setState({'errD':false})
+            console.log(this.seg)
+            if(this.seg != '' && this.segRegex.test(this.seg)){
+                this.setState({'errS':false})
+                if(this.dni != null && this.seg != null){
+                    console.log("hola")
+                }else{
+                    this.setState({'errS':true})
+                }
             }else{
-                this.setState({'err':true})
+                this.setState({'errS':true,'info':" "})
             }
-            
-        });
-    }
-    async changeDb(dni,name,user,seg,segOld){
-        await User.changeUser(dni,name,user,seg,segOld,async (f)=>{
-            if(f){
-                await AsyncStorage.removeItem('@UserData');
-                this.props.navigation.replace('LoginFinish')
-            }else{
-                this.setState({'errg':true})
-            }
-        })
+        }else{
+            this.setState({'errD':true,'info':" "})
+        }
     }
     checkSeg(d,fn){
         if(!this.segRegex.test(d)){
@@ -80,26 +47,23 @@ class login extends Component{
             
         }
     }
-    changeName(text){
-        this.name=text;
+    searchName(text){
+        this.dni=text;
     }
-    changeUserText(text){
+    searchUserText(text){
         this.user=text;
     }
-    changeSeg(text){
+    searchSeg(text){
         this.seg=text;
     }
-    changeSegOld(text){
-        this.segOld=text;
-    }
     render(){
-            let {name,dni,username,err,err2,errg} = this.state;
+            let {name,dni,username,err,err2,errg,errD,errS}= this.state
             return (
                 <View style = {{flex:1,backgroundColor:"white"}}>
                     <Header
                         placement="left"
                         leftComponent={{ icon: 'arrow-back',style: {}, color: '#fff' ,onPress: () => this.props.navigation.goBack(),}}
-                        centerComponent={{ text: 'Configuracion', style: { color: '#fff',fontSize:hp('3.5%'), } }}
+                        centerComponent={{ text: 'Buscar', style: { color: '#fff',fontSize:hp('3.5%'), } }}
                         containerStyle={{
                             backgroundColor: '#f6b93b',
                             justifyContent: 'space-around',
@@ -107,24 +71,25 @@ class login extends Component{
                         }}
                         
 		            />
-                    <View style = {{flex: 10,backgroundColor: 'white',alignItems:'center',marginTop:hp("3%"),marginLeft:hp("2%"),marginRight:hp("2%")}}>
+                    <View style = {{flex: 1.5,backgroundColor: 'white',alignItems:'center',marginTop:hp("3%"),marginLeft:hp("2%"),marginRight:hp("2%")}}>
                     {errg?<Text style={{color:'red'}}>Algo Salio mal intentar nuevamente</Text>:null}
                     <Input
                         containerStyle={styles.tImput}
-                        placeholder={name}
-                        label="Nombre:"
+                        placeholder='100000'
+                        label="Dni:"
                         leftIcon={
                             <Icon
-                                name='user-o'
+                                name='address-card-o'
                                 size={24}
                                 color='#f6b93b'
                             />
                         }
-                        onChangeText={text => this.changeName(text)}
+                        onChangeText={text => this.searchName(text)}
+                        errorMessage={errD?'Formato del Dni incorrecto':null}
                     />
                     <Input
                         containerStyle={styles.tImput}
-                        placeholder={username}
+                        placeholder='Ingresar Username'
                         label="Usuario:"
                         leftIcon={
                             <Icon
@@ -134,7 +99,8 @@ class login extends Component{
                             />
                         }
                         maxLength={40}
-                        onChangeText={text => this.changeUserText(text)}
+                        onChangeText={text => this.searchUserText(text)}
+                        errorMessage={err?'Usermame no existe':null}
                     />
                     <Input
                         containerStyle={styles.tImput}
@@ -149,34 +115,32 @@ class login extends Component{
                             />
                         }
                         maxLength={9}
-                        onChangeText={text => this.changeSegOld(text)}
-                        errorMessage={err?'Codigo de seguimiento incorrecto':null}
-                    />
-                    <Input
-                        containerStyle={styles.tImput}
-                        label="Nuevo N° de seguimiento"
-                        placeholder='xxxx-xxxx'
-                        keyboardType = 'numeric'
-                        leftIcon={
-                            <Icon
-                            name='address-card-o'
-                            size={20}
-                            color='#f6b93b'
-                            />
-                        }
-                        maxLength={9}
-                        onChangeText={text => this.changeSeg(text)}
-                        errorMessage={err2?'Ingresar correctamente el codigo de seguimiento':null}
+                        onChangeText={text => this.searchSeg(text)}
+                        errorMessage={errS?'Codigo de seguimiento incorrecto':null}
                     />
                     <Button
                         titleStyle={styles.bTitle}
                         containerStyle={styles.bContainer}
-                        title="Cambiar datos"
+                        title="Buscar datos"
                         type="outline"
-                        onPress={()=>{this.changeUser()}}
+                        onPress={()=>{this.searchUser()}}
                     />
                     </View>
-                </View>);
+                    <ScrollView style={{flex: 1,backgroundColor: 'white',flexDirection: 'column'}}>
+                        <View style = {{flex: 1,backgroundColor: 'white',flexDirection: 'column', borderTopWidth:3,borderTopColor:'#bdc3c7'}}>
+                            <Text style={styles.ttitle}>Datos recuperados</Text>
+                            <Text style={{color:'black',fontSize:hp('3%'),marginTop:hp('1.8%')}}>Dni:</Text>  
+                            <Text style={{color:'black',fontSize:hp('3%'),marginTop:hp('1.5%')}}>Username:</Text>  
+                            <Text style={{color:'black',fontSize:hp('3%'),marginTop:hp('1.5%')}}>Verificado:</Text>  
+                            <Text style={{color:'black',fontSize:hp('3%'),marginTop:hp('1.5%')}}>Editor:</Text>
+                            <Text style={{color:'black',fontSize:hp('3%'),marginTop:hp('1.5%')}}>Carnet:</Text>
+                            <Text style={{color:'black',fontSize:hp('3%'),marginTop:hp('1.5%')}}>Datos Actualizados:</Text>
+                        </View>
+                    </ScrollView> 
+                </View>
+                
+                
+                );
             }
 }
     
@@ -189,21 +153,20 @@ const styles = StyleSheet.create({
         //justifyContent: 'center',
     },
     bTitle:{
-        fontSize:hp('5%'),
+        fontSize:hp('3%'),
         color:'white',
         margin:0,
         padding:0,
     },
     bContainer:{
-        width:wp('70%'),
-        margin:hp('5%'),
+        width:wp('60%'),
         backgroundColor:'#f6b93b',
     },
     ttitle:{
         color:'black',
-        fontSize:hp('8%'),
-        marginTop:hp('10%'),
-        marginBottom:hp('5%')
+        fontSize:hp('5%'),
+        //marginTop:hp('10%'),
+        //marginBottom:hp('5%')
         //textShadowColor: "red",
     },
     text:{
@@ -242,4 +205,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default login
+export default Search

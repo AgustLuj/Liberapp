@@ -5,6 +5,8 @@ import Dni from '../views/dni';
 import News from '../views/news';
 import Votes from '../views/votes';
 import List_Options from '../views/list-options';
+import Search from '../views/search';
+
 export default {
     Login,
     UserView,
@@ -12,5 +14,6 @@ export default {
     Dni,
     News,
     Votes,
-    List_Options
+    List_Options,
+    Search
 };

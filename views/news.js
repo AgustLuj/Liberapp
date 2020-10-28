@@ -81,6 +81,7 @@ class News extends Component{
                     containerStyle={{
                         backgroundColor: '#f6b93b',
                         justifyContent: 'space-around',
+                        borderBottomColor:'#bdc3c7',
                     }}
                 />
                 <View style = {{flex: 1,backgroundColor: 'white',flexDirection: 'column'}}>

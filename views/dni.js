@@ -42,6 +42,7 @@ class login extends Component{
                         containerStyle={{
                             backgroundColor: '#f6b93b',
                             justifyContent: 'space-around',
+                            borderBottomColor:'#bdc3c7',
                         }}
 		            />
                     <View style = {{flex: 10,backgroundColor: 'white',alignItems:'center'}}>

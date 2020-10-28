@@ -4,6 +4,7 @@
 *.hprof
 *.apk
 *.rar
+*.psd
 # Xcode
 #
 build/

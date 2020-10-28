@@ -25,7 +25,12 @@ class User{
     
     const data = await querry.json();
     if(querry.status != 200){
-      fn(false,null);
+      if(!data['user']){
+        fn(false,false);
+      }else{
+        fn(false,null); 
+      }
+      
     }else{
       if(null !== data['user']){
         fn(true,data['user']);

@@ -41,6 +41,14 @@ function Options_List({ navigation }) {
 					}}
 				/>
 				<Options.Screen
+					name="Search"
+					component={Routes.Search}
+					options={{
+						title: 'LiberApp',
+						headerShown: false,
+					}}
+				/>
+				<Options.Screen
 					name="Config"
 					component={Routes.Config}
 					options={{

@@ -154,7 +154,7 @@ class login extends Component{
                             
                         </View>
                     </View>
-                    <View style = {{flex: 0.3,backgroundColor: 'white',flexDirection: 'row', borderTopWidth:3,borderTopColor:'#7f8c8d'}}>
+                    <View style = {{flex: 0.3,backgroundColor: 'white',flexDirection: 'row', borderTopWidth:3,borderTopColor:'#bdc3c7'}}>
                         <Text style={{color:'black',fontSize:hp('5%'),marginTop:hp('1%')}}>Noticias</Text>                       
                     </View>
                     <View style = {{flex: 2.3,backgroundColor: 'white',flexDirection: 'column',marginLeft:hp('1.5%')}}>

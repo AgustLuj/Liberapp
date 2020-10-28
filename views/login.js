@@ -37,18 +37,20 @@ class login extends Component{
                                     this.props.navigation.replace('Tabs' );
                                 }
                             }catch{
-                                this.setState({'errg':true})
+                                this.setState({'errg':true,'info':" "})
                             }
+                        }else if(user === false){
+                            this.setState({'errg':true,'info':"Entra a adordni.ml y actualizar tus datos"})
                         }else{
-                            this.setState({'errg':true})
+                            this.setState({'errg':true,'info':" "})
                         }
                     })
                 }
             }else{
-                this.setState({'errS':true})
+                this.setState({'errS':true,'info':" "})
             }
         }else{
-            this.setState({'errD':true})
+            this.setState({'errD':true,'info':" "})
         }
         
         
@@ -77,14 +79,14 @@ class login extends Component{
                     onChangeText={text => this.changeSeg(text)}
                 />*/
     render(){
-        const {name,errg,errD,errS}= this.state
+        const {name,errg,errD,errS,info}= this.state
         return (
             
             <View style = {{flex:1}}>
                 <View style = {{flex: 10,backgroundColor: 'white',alignItems:'center'}}>
                 <Text h1 h1Style={styles.ttitle}>Bienvenidos</Text>
                
-                {errg?<Text style={{color:'red'}} >Dni o Seguimineto incorrecto</Text>:null}
+                {errg?<Text style={{color:'red'}} >{(info === " ")?"Dni o Seguimineto incorrecto":info}</Text>:null}
                 <Input
                     containerStyle={styles.tImput}
                     placeholder='100000'
