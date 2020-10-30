@@ -6,16 +6,15 @@ import AsyncStorage  from '@react-native-community/async-storage';
 class app extends Component {
   constructor(props){
     super(props);
-    AsyncStorage.setItem(
-      'Inicio',
-      'A'
-  );
+    this.count =0;
+    this.state = {
+    }
   }
   render(){
     return (
-    <View style = {{flex:1}}>
-      <AppStack/>
-    </View>);
+      <View style = {{flex:1}}>
+        <AppStack />
+      </View>);
   }
 }
 

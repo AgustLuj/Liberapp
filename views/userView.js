@@ -11,6 +11,17 @@ speed();
 let userData;
 async function speed (){
     userData = JSON.parse(await AsyncStorage.getItem('@UserData'))
+    /*userData = AsyncStorage.getItem('@UserData')
+    setInterval(async ()=>{
+          if(await AsyncStorage.getItem('@UserData') != null){
+                clearInterval(this);
+                this.setState({f:true});
+            }else{
+                this.setState({f:true});
+                clearInterval(this);
+                this.count= 0;
+            }
+    },400);*/
 }
 class login extends Component{
     constructor(props){
@@ -19,13 +30,13 @@ class login extends Component{
             this.setState({value:11})
         });
         this.noticias = [];
-        this.name=userData.name;
-        this._id=userData._id;
-        this.dni =userData.dni;
-        this.imagen=userData.imagen;
-        this.verificado=userData.verificado;
-        this.admin=userData.admin;
-        this.imgP=userData.imgP;
+        this.name=global.value.name;
+        this._id=global.value._id;
+        this.dni =global.value.dni;
+        this.imagen=global.value.imagen;
+        this.verificado=global.value.verificado;
+        this.admin=global.value.admin;
+        this.imgP=global.value.imgP;
         this.state = {
             cargando:true,
             errg:false,
@@ -74,7 +85,7 @@ class login extends Component{
         });
     }
     async componentDidMount(){
-        this.data();
+        //this.data();
     }
     async userVote(id,i,j){
         console.log(id);
@@ -110,7 +121,6 @@ class login extends Component{
         let {name,dni,verificado,admin,cargando,errg,f,_id} = this.state;
         //this.getData();
         /**/
-        
         let link =`https://adordni.ml/img/${this.imgP}`;
         var radio_props = [
             {label: 'param1', value: 'Agustin',id:0 },

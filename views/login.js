@@ -33,8 +33,10 @@ class login extends Component{
                                     '@UserData',
                                     JSON.stringify(user)
                                 );
+                                
                                 if(null != await AsyncStorage.getItem('@UserData')){
-                                    this.props.navigation.replace('Tabs' );
+                                    global.value=user;
+                                    this.props.navigation.replace('Tabs'); 
                                 }
                             }catch{
                                 this.setState({'errg':true,'info':" "})

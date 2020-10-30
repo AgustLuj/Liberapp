@@ -65,7 +65,10 @@ function Options_List({ navigation }) {
 	);
 }
 async function deleteSession(fn){
-	await AsyncStorage.removeItem('@UserData');
+	
+	AsyncStorage.removeItem('@UserData',(err,result)=>{
+		console.log("bien")
+	});
 	if(null == await AsyncStorage.getItem('@UserData')){
 		fn(true)
 	}else{
@@ -92,7 +95,7 @@ function CustomDrawerContent(props) {
 					props.navigation.replace('LoginFinish')
 				}else{
 					deleteSession((d)=>{
-						if(d()){
+						if(d){
 							props.navigation.replace('LoginFinish')
 						}else{
 							props.navigation.replace('Tabs')
@@ -142,11 +145,23 @@ class drawerScreen extends Component{
 class AppStack extends Component{
     constructor(props){
 		super(props);
-
+		this.data = AsyncStorage.getItem('@UserData');
 		this.state={
+			f:false,
 			Route:(null == userData)?Routes.Login:drawerScreen,
 		}
 		
+		this.a = setInterval(async ()=>{
+			if(this.data._55 == null){
+				this.setState({f:true,Route:Routes.Login});	
+			}
+			if(this.data._55 != null){
+				JSON.parse(this.data._55)
+				//console.log(this.data._55,'aaaa')
+				clearInterval(this);
+				this.setState({f:true});
+			}
+		},1000);
 		this.opt1={
 			headerStyle: {
 			  backgroundColor: '#f4511e',
@@ -164,16 +179,20 @@ class AppStack extends Component{
     async componentDidMount(){
 		let value = await AsyncStorage.getItem('@UserData');
 		if(null !== value){
+			global.value=JSON.parse(value);
 			this.setState({'d':true,'ver':value.verificado})
 		}else{
+			global.value=value;
 			this.setState({'d':false})
 		}     
 	}
 	
 	//component={(!d)? Routes.Login:drawerScreen}
     render(){
-		const {Route,ver}= this.state;
-        return (
+		
+		const {Route,ver,f}= this.state;
+		if(f){
+		  return (
 			<NavigationContainer>
 				<Stack.Navigator>
 					<Stack.Screen
@@ -209,7 +228,13 @@ class AppStack extends Component{
 					/>
 				</Stack.Navigator>
 			</NavigationContainer>
-		);
+		  );
+		}else{
+		  return (
+			<View style = {{flex:1, backgroundColor:'#f6b93b'}}>
+			</View>
+		  );
+		}
 	}
 }
 

@@ -10,8 +10,6 @@ speed();
 var userData;
 async function speed (){
     userData = JSON.parse(await AsyncStorage.getItem('@UserData'))
-    userData.admin = true;
-    userData.editor = false;
 }
 class List_Options extends Component{
     constructor(props){
