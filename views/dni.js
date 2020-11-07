@@ -30,6 +30,7 @@ class login extends Component{
     }
     render(){
         let {name,dni,imagen,seguimiento} = this.state
+        Image.resolveAssetSource(link);
         let link =`https://adordni.ml/img/${imagen}`;
         let link2 =`https://adordni.ml/img/2${imagen}`;
             return (
@@ -51,7 +52,7 @@ class login extends Component{
                             resizeMode="contain" 
                             style={styles.dni} 
                             source={{
-                                uri:link}} />
+                                uri:`https://adordni.ml/img/${imagen}`}} />
                     </View>
                 </View>);
             }

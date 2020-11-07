@@ -1,16 +1,18 @@
 import React, { Component } from 'react';
-import { StyleSheet, View,TextInput,TouchableOpacity } from 'react-native';
+import { StyleSheet, View,TextInput,TouchableOpacity,ScrollView,KeyboardAvoidingView,TouchableWithoutFeedback,Keyboard   } from 'react-native';
 import User from '../components/user';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import AsyncStorage  from '@react-native-community/async-storage' ;
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Input, Text, Button } from 'react-native-elements';
+import KeyboardAvoid from 'react-native-keyboard-avoid';
+
 class login extends Component{
     constructor(props){
         super(props);
         this.dni=null;
         this.seg=null;
-        this.dniregex=/\d\d\d\d/;
+        this.dniregex=/\d\d\d\d\d\d/;
         this.segregex=/[0-9]*-[0-9]*/;
         this.state= {
           name:null,
@@ -18,7 +20,7 @@ class login extends Component{
         this.getUser = this.getUser.bind(this)
     }
     getUser(){
-        if(this.dniregex.test(this.dni)){
+        if(this.dniregex.test(this.dni) && this.dni.toString().length == 6){
             this.setState({'errD':false})
             if(this.segregex.test(this.seg)){
                 this.setState({'errS':false})
@@ -42,7 +44,8 @@ class login extends Component{
                                 this.setState({'errg':true,'info':" "})
                             }
                         }else if(user === false){
-                            this.setState({'errg':true,'info':"Entra a adordni.ml y actualizar tus datos"})
+                            this.props.navigation.navigate("warning");
+                            //this.setState({'errg':true,'info':"Entra a adordni.ml y actualizar tus datos"})
                         }else{
                             this.setState({'errg':true,'info':" "})
                         }
@@ -56,6 +59,13 @@ class login extends Component{
         }
         
         
+    }
+    _onFocus () {
+        KeyboardAvoid.checkNeedScroll({
+            nodeRef: this.titleInput, 		    //TextInput ref
+            scrollNodeRef: this.scrollView,     //ScrollView ref
+            contentOffset: this.contentOffset   //ScrollView scrollOffset.y
+        }, 'scroll', 10);
     }
     changeDni(text){
         this.dni=text;
@@ -79,63 +89,126 @@ class login extends Component{
                     placeholder="N° Seguimiento"
                     keyboardType = 'numeric'
                     onChangeText={text => this.changeSeg(text)}
-                />*/
+                />
+                <ScrollView style={{flex: 1,backgroundColor: 'white',flexDirection: 'column'}}
+                scrollEventThrottle={3}
+                onScroll={(event) => {this.contentOffset = event.nativeEvent.contentOffset.y}}>
+                    
+                    <View style = {{flex: 10,backgroundColor: 'white',alignItems:'center'}}>
+                    <Text h1 h1Style={styles.ttitle}>Bienvenidos</Text>
+                
+                    {errg?<Text style={{color:'red'}} >{(info === " ")?"Dni o Seguimineto incorrecto":info}</Text>:null}
+                    <Input
+                        containerStyle={styles.tImput}
+                        placeholder='100000'
+                        label="Ingrese su Dni"
+                        leftIcon={
+                            <Icon
+                            name='user-o'
+                            size={24}
+                            color='#f6b93b'
+                            />
+                        }
+                        ref={(ref) => this.titleInput = ref}
+                        onFocus={() => this._onFocus()}
+                        onSubmitEditing={() => { this.secondTextInput.focus(); }}
+                        keyboardType = 'numeric'
+                        blurOnSubmit={false}
+                        onChangeText={text => this.changeDni(text)}
+                        errorMessage={errD?'Formato del Dni incorrecto':null}
+                        />
+                    <Input
+                        containerStyle={styles.tImput}
+                        label="Ingrese su N° de seguimiento"
+                        placeholder='xxxx-xxxx'
+                        keyboardType = 'numeric'
+                        leftIcon={
+                            <Icon
+                            name='address-card-o'
+                            size={20}
+                            color='#f6b93b'
+                            />
+                        }
+                        ref={(input) => { this.secondTextInput = input; }}
+                        onChangeText={text => this.changeSeg(text)}
+                        errorMessage={errS?'Formato del N° Seguimiento incorrecto':null}
+                    />
+                    <Button
+                        titleStyle={styles.bTitle}
+                        containerStyle={styles.bContainer}
+                        title="Ingresar"
+                        type="outline"
+                        onPress={()=>{this.getUser()}}
+                    />
+                    </View> 
+                </ScrollView>
+                
+                
+                */
     render(){
         const {name,errg,errD,errS,info}= this.state
-        return (
-            
-            <View style = {{flex:1}}>
-                <View style = {{flex: 10,backgroundColor: 'white',alignItems:'center'}}>
-                <Text h1 h1Style={styles.ttitle}>Bienvenidos</Text>
-               
-                {errg?<Text style={{color:'red'}} >{(info === " ")?"Dni o Seguimineto incorrecto":info}</Text>:null}
-                <Input
-                    containerStyle={styles.tImput}
-                    placeholder='100000'
-                    label="Ingrese su Dni"
-                    leftIcon={
-                        <Icon
-                        name='user-o'
-                        size={24}
-                        color='#f6b93b'
-                        />
-                    }
-                    keyboardType = 'numeric'
-                    onChangeText={text => this.changeDni(text)}
-                    errorMessage={errD?'Formato del Dni incorrecto':null}
-                    />
-                <Input
-                    containerStyle={styles.tImput}
-                    label="Ingrese su N° de seguimiento"
-                    placeholder='xxxx-xxxx'
-                    keyboardType = 'numeric'
-                    leftIcon={
-                        <Icon
-                        name='address-card-o'
-                        size={20}
-                        color='#f6b93b'
-                        />
-                    }
-                    onChangeText={text => this.changeSeg(text)}
-                    errorMessage={errS?'Formato del N° Seguimiento incorrecto':null}
-                />
-                <Button
-                    titleStyle={styles.bTitle}
-                    containerStyle={styles.bContainer}
-                    title="Ingresar"
-                    type="outline"
-                    onPress={()=>{this.getUser()}}
-                />
-                </View>
-            </View>);
+        return (                
+                <KeyboardAvoidingView
+                    style={{flex: 1}}
+                >
+                    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                        <View style = {{flex: 1,backgroundColor: 'white',alignItems:'center', justifyContent: "space-around"}}>
+                            <View style={{justifyContent: "space-around",alignItems:'center'}}>
+                                <Text h1 h1Style={styles.ttitle}>Bienvenidos</Text>
+                        
+                                {errg?<Text style={{color:'red'}} >{(info === " ")?"Dni o Seguimineto incorrecto":info}</Text>:null}
+                                <Input
+                                    containerStyle={styles.tImput}
+                                    placeholder='100000'
+                                    label="Ingrese su Dni"
+                                    leftIcon={
+                                        <Icon
+                                        name='user-o'
+                                        size={24}
+                                        color='#f6b93b'
+                                        />
+                                    }
+                                    ref={(ref) => this.titleInput = ref}
+                                    onFocus={() => this._onFocus()}
+                                    onSubmitEditing={() => { this.secondTextInput.focus(); }}
+                                    keyboardType = 'numeric'
+                                    blurOnSubmit={false}
+                                    onChangeText={text => this.changeDni(text)}
+                                    errorMessage={errD?'Formato del Dni incorrecto':null}
+                                    />
+                                <Input
+                                    containerStyle={styles.tImput}
+                                    label="Ingrese su N° de seguimiento"
+                                    placeholder='xxxx-xxxx'
+                                    keyboardType = 'numeric'
+                                    leftIcon={
+                                        <Icon
+                                        name='address-card-o'
+                                        size={20}
+                                        color='#f6b93b'
+                                        />
+                                    }
+                                    ref={(input) => { this.secondTextInput = input; }}
+                                    onChangeText={text => this.changeSeg(text)}
+                                    errorMessage={errS?'Formato del N° Seguimiento incorrecto':null}
+                                />
+                                <Button
+                                    titleStyle={styles.bTitle}
+                                    containerStyle={styles.bContainer}
+                                    title="Ingresar"
+                                    type="outline"
+                                    onPress={()=>{this.getUser()}}
+                                />
+                            </View>
+                        </View> 
+                    </TouchableWithoutFeedback>
+                </KeyboardAvoidingView>);
         }
 }
     
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#7f8c8d',
-        alignItems: 'center',
         //justifyContent: 'center',
     },
     bTitle:{
@@ -148,10 +221,11 @@ const styles = StyleSheet.create({
         width:wp('70%'),
         margin:hp('5%'),
         backgroundColor:'#f6b93b',
+        justifyContent:'flex-start'
     },
     ttitle:{
-        marginTop:hp('20%'),
-        marginBottom:hp('2%')
+        //marginTop:-hp('1%'),
+        marginBottom:hp('2%')  
         //textShadowColor: "red",
     },
     text:{
@@ -172,7 +246,7 @@ const styles = StyleSheet.create({
         width:wp('50%'),
         fontSize:hp('3%'),
         backgroundColor: '#00000000',
-        marginBottom:hp('5%'),
+        marginBottom:hp('2%'),
         textAlign:"center",
         borderWidth: 1,
         borderRadius:30,
@@ -180,6 +254,7 @@ const styles = StyleSheet.create({
         paddingRight:5,
         paddingBottom:10,
         paddingTop:0,
+        justifyContent:'flex-start'
     },
     tButton:{
         height: hp('5%'),

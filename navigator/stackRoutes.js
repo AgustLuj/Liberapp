@@ -6,6 +6,9 @@ import News from '../views/news';
 import Votes from '../views/votes';
 import List_Options from '../views/list-options';
 import Search from '../views/search';
+import Warning from '../views/warning';
+import addUser from '../views/addUser';
+import infoUser from '../views/InfoUser';
 
 export default {
     Login,
@@ -15,5 +18,8 @@ export default {
     News,
     Votes,
     List_Options,
-    Search
+    Search,
+    Warning,
+    addUser,
+    infoUser
 };

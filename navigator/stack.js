@@ -57,8 +57,20 @@ function Options_List({ navigation }) {
 					}}
 				/>
 				<Options.Screen
-					name="Test"
-					component={Routes.Config}
+					name="add_user"
+					component={Routes.addUser}
+					options={{
+						title: 'LiberApp',
+						headerShown: false,
+					}}
+				/>
+				<Options.Screen
+					name="UserInfo"
+					component={Routes.infoUser}
+					options={{
+						title: 'LiberApp',
+						headerShown: false,
+					}}
 				/>
 			</Options.Navigator>
 	</View>
@@ -152,14 +164,16 @@ class AppStack extends Component{
 		}
 		
 		this.a = setInterval(async ()=>{
-			if(this.data._55 == null){
-				this.setState({f:true,Route:Routes.Login});	
+			//console.log("a")
+			if(JSON.parse(this.data._55) == null){
+				this.setState({f:true,Route:Routes.Login});
+				clearInterval(this.a);
 			}
-			if(this.data._55 != null){
+			if(JSON.parse(this.data._55) != null){
 				JSON.parse(this.data._55)
 				//console.log(this.data._55,'aaaa')
-				clearInterval(this);
-				this.setState({f:true});
+				clearInterval(this.a);
+				this.setState({f:true,Route:drawerScreen});
 			}
 		},1000);
 		this.opt1={
@@ -206,6 +220,14 @@ class AppStack extends Component{
 					<Stack.Screen
 						name="Tabs"
 						component={drawerScreen}
+						options={{
+							title: 'LiberApp',
+							headerShown: false,
+						  }}
+					/>
+					<Stack.Screen
+						name="warning"
+						component={Routes.Warning}
 						options={{
 							title: 'LiberApp',
 							headerShown: false,

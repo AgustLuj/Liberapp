@@ -9,7 +9,7 @@ import { Header,ListItem, Icon } from 'react-native-elements';
 speed();
 var userData;
 async function speed (){
-    userData = JSON.parse(await AsyncStorage.getItem('@UserData'))
+    //userData = JSON.parse(await AsyncStorage.getItem('@UserData'))
 }
 class List_Options extends Component{
     constructor(props){
@@ -51,14 +51,21 @@ class List_Options extends Component{
             {
                 title: 'Crear Votacion',
                 view:'build_News',
-                icon: 'ios-checkbox',
+                icon: 'ios-checkbox-outline',
                 admin:false,
                 editor:true,
               
             },
-            
+            {
+              title: 'Aceptar Usuarios',
+              view:'add_user',
+              icon: 'ios-add-circle-outline',
+              admin:true,
+              editor:false,
+            },
             
           ]
+          userData = global.value;
         return (
             <View style = {{flex:1}}>
                 <Header

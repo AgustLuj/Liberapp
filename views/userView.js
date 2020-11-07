@@ -40,14 +40,14 @@ class login extends Component{
         this.state = {
             cargando:true,
             errg:false,
-            _id:userData._id,
-            name:userData.name,
-            dni: userData.dni,
+            _id:global.value._id,
+            name:global.value.name,
+            dni: global.value.dni,
             f:true,
-            imagen: userData.imagen,
-            verificado: userData.verificado,
-            admin: userData.admin,
-            imgP:userData.imgP
+            imagen: global.value.imagen,
+            verificado: global.value.verificado,
+            admin: global.value.admin,
+            imgP:global.value.imgP
         }
     }
     async loadNews(fn){
@@ -58,7 +58,7 @@ class login extends Component{
                 
                 d.forEach(element => {
                     if(element !=  null){
-                        if(null != element.options){
+                        if(null != element.options){// cambiar a type
                             element.options.candidates.forEach(({_id},i)=>{
                                 element.options.candidates[i].value=_id
                             })
@@ -118,9 +118,11 @@ class login extends Component{
         
     }
     render(){
-        let {name,dni,verificado,admin,cargando,errg,f,_id} = this.state;
+        let {cargando,errg,f,_id} = this.state;
         //this.getData();
-        /**/
+        /*
+        <Text style={styles.text}>LiberCoins: 1000</Text>
+        */
         let link =`https://adordni.ml/img/${this.imgP}`;
         var radio_props = [
             {label: 'param1', value: 'Agustin',id:0 },
@@ -158,10 +160,9 @@ class login extends Component{
                             <Text style={styles.ttitle}>Bienvenido!!</Text>    
                             <Text style={styles.text}>{this.name}</Text>
                             <Text style={styles.text}>Tu dni es:{this.dni}</Text>
-                            <Text style={styles.text}>LiberCoins: 1000</Text>
+                            
                             {!this.verificado?<Text style={styles.text}>No esta verificado</Text> :null} 
                             {this.admin?<Text style={styles.text}>Sos Admin</Text> :null} 
-                            
                         </View>
                     </View>
                     <View style = {{flex: 0.3,backgroundColor: 'white',flexDirection: 'row', borderTopWidth:3,borderTopColor:'#bdc3c7'}}>
@@ -174,7 +175,7 @@ class login extends Component{
                             onRefresh={this._onRefresh}
                         />
                         }>  
-                        {(cargando)?<Text style={styles.ttitle}>{errg?<Text style={{color:'red'}}>Algo Salio mal intentar nuevamente</Text>:'Cargando'}</Text> :
+                        {(cargando)?<Text style={styles.ttitle}>{errg?'Algo Salio mal intentar nuevamente':'Cargando'}</Text> :
 
                         this.noticias.map(({title,text,type,options},i)=>{
                             if(type == 1){
@@ -217,7 +218,12 @@ class login extends Component{
                                                 return(
                                                 <View key={j}>
                                                     <Text style={{color:'black',fontSize:hp('2.5%'),marginLeft:hp('5%')}}>{obj.label}</Text>
-                                                    <Progress.Bar key={j} progress={(f)?0:(options.votes === 0 )?0:obj.vote/options.votes} width={wp('85%')} color={'#f6b93b'} style={{marginLeft:hp('5%'),marginTop:hp('0.5%'),marginBottom:hp('1%')}} animationType={'spring'}/>
+                                                    <Progress.Bar key={j} 
+                                                        progress={(f)?0:(options.votes === 0 )?0:obj.vote/options.votes} 
+                                                        width={wp('85%')} color={'#f6b93b'} 
+                                                        style={{marginLeft:hp('5%'),marginTop:hp('0.5%'),marginBottom:hp('1%')}} 
+                                                        animationType={'spring'}
+                                                    />
                                                 </View>
                                                 
                                             )}

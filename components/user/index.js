@@ -1,5 +1,5 @@
-const pagina = 'https://adordni.ml';
-//const pagina = 'http://192.168.100.42:3000';
+//const pagina = 'https://adordni.ml';
+const pagina = 'http://192.168.100.42:3000';
 
 class User{
   async online(fn){
@@ -40,6 +40,7 @@ class User{
     }
     
   }
+  
   async changeUser(dni,name,usern,seg,segold,fn){
     const querry = await fetch(`${pagina}/users/changeUser`,{
       method:'POST',
@@ -148,5 +149,33 @@ class User{
     } 
     
   }
+  async getDataNewUser(_id,fn){
+    let querry = await fetch(`${pagina}/newusers/data`, {
+        method: 'POST',
+        body: JSON.stringify({_id}),
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+    
+    const data = await querry.json();
+    if(querry.status != 200){
+      if(!data['NewUser']){
+        fn(false,false);
+      }else{
+        fn(false,null); 
+      }
+      
+    }else{
+      if(null !== data['NewUser']){
+        fn(true,data['NewUser']);
+      }else{
+        fn(false,null);
+      }
+    }
+    
+  }
 }
+
 export default new User;
