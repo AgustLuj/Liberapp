@@ -55,11 +55,7 @@ class List_Options extends Component{
                         <View>
                             <Text style={styles.ttitle}>El usuario {hola} fue registrado correctamente</Text>
                             <Text style={{color:'black',fontSize:hp('3%'),marginTop:hp('1.8%')}}>Dni:</Text>  
-                            <Text style={{color:'black',fontSize:hp('3%'),marginTop:hp('1.5%')}}>Username:</Text>  
-                            <Text style={{color:'black',fontSize:hp('3%'),marginTop:hp('1.5%')}}>Verificado:</Text>  
-                            <Text style={{color:'black',fontSize:hp('3%'),marginTop:hp('1.5%')}}>Editor:</Text>
-                            <Text style={{color:'black',fontSize:hp('3%'),marginTop:hp('1.5%')}}>Carnet:</Text>
-                            <Text style={{color:'black',fontSize:hp('3%'),marginTop:hp('1.5%')}}>Datos Actualizados:</Text>
+                            <Text style={{color:'black',fontSize:hp('3%'),marginTop:hp('1.5%')}}>Seguimiento:</Text>
                         </View>
                     </ScrollView>
           </View>

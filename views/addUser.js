@@ -80,7 +80,7 @@ class List_Options extends Component{
                                             containerStyle={styles.bContainer}
                                             title="Aceptar"
                                             type="outline"
-                                            onPress={()=>{this.props.navigation.navigate('UserInfo',{'hola':true})}}
+                                            onPress={()=>{this.props.navigation.navigate('UserInfo',{'hola':'Agus'})}}
                                         />
                                     </View>  
                                     <View style={{flexDirection: 'column',justifyContent:'center'}}>
