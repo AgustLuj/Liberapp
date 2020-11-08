@@ -16,48 +16,103 @@ class List_Options extends Component{
         super(props);
         this.userNews=[]
         this.state= {
-            cargando:true,
+            cargando:false,
             errg:false,
-            f:true,
+            title:`El usuario ${this.props.route.params.username} quiere ingresar a la comunidad`,
+            msg1:`Antes de aceptar porfavor revisa su twitter para evitar usuarios falsos, bots o personas ajenas a nuestra lucha`,
+            msg2:`Este usuario merece ser agregado a nuestra comunidad?\nEsta accion no tiene marcha atras y serás responsable de este usuario \n\n`,
+            msg3:`Name:${this.props.route.params.name}\nUsername:${this.props.route.params.username}\nEspecie:${this.props.route.params.especie}\n`,
+            f:false,
+
         }
     }
-    _onRefresh = () => {
-        this.setState({refreshing: true});
+    async acceptUser(id){
         this.setState({cargando:true})
-        this.noticias = []
-        this.loadUsers(()=>{
-            this.setState({refreshing: false});
-        });
+        await User.acceptUser(global.value._id,id,(err,usera)=>{
+            if(!err){
+                let title = `El usuario ${this.props.route.params.username} fue aceptado en la comunidad`;
+                let msg1 ='';
+                let msg2 = ''
+                let msg3 = `Los datos nuevos de ${this.props.route.params.username} son : \n\nDni:${usera.dni}\n\nSeguimineto : ${usera.seg}\n`;
+                this.setState({cargando:false,title,msg1,msg2,msg3,f:true});
+                console.log(usera);
+            }else{
+                this.setState({cargando:true,errg:true});
+            }
+        })
+        //console.log(id);
+        //this.props.navigation.replace("add_user");
     }
     render(){
             userData = global.value;
-            let {hola}=this.props.route.params;
-            let {cargando,errg,f,_id} = this.state;
+            let {username,name,_id,especie}=this.props.route.params;
+            let {cargando,errg,f,title,msg1,msg2,msg3} = this.state;
         return (
             <View style = {{flex:1}}>
                 <Header
-				placement="left"
-				leftComponent={{ icon: 'arrow-back',style: {}, color: '#fff' ,onPress: () => this.props.navigation.goBack(),}}
-				centerComponent={{ text: 'Añadir Usuarios', style: { color: '#fff',fontSize:hp('3.5%'), } }}
-				containerStyle={{
-					backgroundColor: '#f6b93b',
-                    justifyContent: 'space-around',
-                    borderBottomColor:'#bdc3c7',
-				}}
-			/>
+                    placement="left"
+                    leftComponent={{ icon: 'arrow-back',style: {}, color: '#fff' ,onPress: () => this.props.navigation.goBack(),}}
+                    centerComponent={{ text: 'Añadir Usuarios', style: { color: '#fff',fontSize:hp('3.5%'), } }}
+                    containerStyle={{
+                        backgroundColor: '#f6b93b',
+                        justifyContent: 'space-around',
+                        borderBottomColor:'#bdc3c7',
+                    }}
+			    />
 
-            <ScrollView style={{flex: 1,backgroundColor: 'white',flexDirection: 'column'}} refreshControl={
-                        <RefreshControl
-                            refreshing={this.state.refreshing}
-                            onRefresh={this._onRefresh}
-                        />
-                        }>
+            <ScrollView style={{flex: 1,backgroundColor: 'white',flexDirection: 'column'}}>
+                {(!cargando)?
                         <View>
-                            <Text style={styles.ttitle}>El usuario {hola} fue registrado correctamente</Text>
-                            <Text style={{color:'black',fontSize:hp('3%'),marginTop:hp('1.8%')}}>Dni:</Text>  
-                            <Text style={{color:'black',fontSize:hp('3%'),marginTop:hp('1.5%')}}>Seguimiento:</Text>
+                            <View>
+                                <Text style={styles.ttitle}>{title}</Text>
+                                <Text style={{color:'red',fontSize:hp('2%'),marginTop:hp('1.8%')}}>{msg1}</Text>  
+                                <Text style={{color:'red',fontSize:hp('2%'),marginTop:hp('1.8%')}}>{msg2} </Text>  
+                                <Text style={{color:'black',fontSize:hp('3%'),marginTop:hp('1.8%')}}>{msg3}</Text>  
+                            </View>
+                            {!f?<View style={{flexDirection:'row',justifyContent:'space-around'}}>  
+                                <Button
+                                    titleStyle={styles.bTitle}
+                                    containerStyle={styles.bContainer}
+                                    title="Aceptar"
+                                    type="outline"
+                                    onPress={()=>{this.acceptUser(_id)}}
+                                />
+                                <Button
+                                    titleStyle={styles.bTitle}
+                                    containerStyle={styles.bContainer}
+                                    title="Cambiar"
+                                    type="outline"
+                                    onPress={()=>{this.props.navigation.navigate("Config")}}
+                                />
+                                <Button
+                                    titleStyle={styles.bTitle}
+                                    containerStyle={styles.bContainer}
+                                    title="Rechazar"
+                                    type="outline"
+                                    onPress={()=>{this.rejectUser()}}
+                                /> 
+                            </View>:<Button
+                                titleStyle={styles.bTitle}
+                                containerStyle={styles.bContainer}
+                                title="Volver"
+                                type="outline"
+                                onPress={()=>{this.props.navigation.goBack()}}
+                            /> }
+                            
                         </View>
-                    </ScrollView>
+                        
+                    :errg?<View>
+                            <Text style={styles.ttitle}>Algo Salio mal intentar nuevamente</Text>
+                            <Button
+                                titleStyle={styles.bTitle}
+                                containerStyle={styles.bContainer}
+                                title="Volver"
+                                type="outline"
+                                onPress={()=>{this.props.navigation.goBack()}}
+                            /> 
+                        </View>
+                    :<Text style={styles.ttitle}>Cargando</Text>}      
+            </ScrollView>
           </View>
         );
     }
@@ -70,9 +125,20 @@ const styles = StyleSheet.create({
         //alignItems: 'Left',
         //justifyContent: 'center',
     },
+    bTitle:{
+        fontSize:hp('2.5%'),
+        color:'white',
+        margin:0,
+        padding:0,
+    },
+    bContainer:{
+        width:wp('30%'),
+        backgroundColor:'#f6b93b',
+        justifyContent:'flex-start'
+    },
     ttitle:{
         color:'black',
-        fontSize:hp('5%'),
+        fontSize:hp('4%'),
         alignItems: 'center',
         justifyContent: 'center',
         //marginTop:hp('10%'),

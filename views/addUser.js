@@ -3,8 +3,7 @@ import { StyleSheet, View,TextInput,TouchableOpacity, ScrollView,RefreshControl 
 import User from '../components/user';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import AsyncStorage  from '@react-native-community/async-storage' ;
-import { Input, Text, Button } from 'react-native-elements';
-import { Header,ListItem, Icon } from 'react-native-elements';
+import { Input, Text, Button, Header,ListItem, Icon } from 'react-native-elements';
 
 speed();
 var userData;
@@ -46,7 +45,33 @@ class List_Options extends Component{
     }
     render(){
           userData = global.value;
-
+            /*
+            <View key={i} style = {{flex: 1,backgroundColor: 'white',flexDirection: 'row',justifyContent: "space-between",borderBottomWidth:1,borderBottomColor:'black',paddingBottom:hp('2%')}}>
+                                    <View style={{flexDirection: 'column',justifyContent:'center'}}>
+                                        <Text style={styles.ttitle}>{username}</Text>
+                                    </View>
+                                    <View style={{flexDirection: 'column',justifyContent:'center'}}>
+                                        <Button
+                                            titleStyle={styles.bTitle}
+                                            containerStyle={styles.bContainer}
+                                            title="Aceptar"
+                                            type="outline"
+                                            onPress={()=>{}}
+                                        />
+                                    </View>  
+                                    <View style={{flexDirection: 'column',justifyContent:'center'}}>
+                                        <Button
+                                            titleStyle={styles.bTitle}
+                                            containerStyle={styles.bContainer}
+                                            title="Rechazar"
+                                            type="outline"
+                                            onPress={()=>{this.rejectUser()}}
+                                        /> 
+                                    </View>
+                                    
+                                </View>
+            
+            */
           let {cargando,errg,f,_id} = this.state;
         return (
             <View style = {{flex:1}}>
@@ -68,32 +93,18 @@ class List_Options extends Component{
                         />
                         }>
                             {(cargando)?<View style={{alignItems:'center'}}><Text style={styles.ttitle}>{errg?'Algo Salio mal intentar nuevamente':'Cargando'}</Text></View> : 
-                            this.userNews.map(({username,_id},i)=>{
+                            this.userNews.map((user,i)=>{
                                 return(
-                                <View key={i} style = {{flex: 1,backgroundColor: 'white',flexDirection: 'row',justifyContent: "space-between",borderBottomWidth:1,borderBottomColor:'black',paddingBottom:hp('2%')}}>
-                                    <View style={{flexDirection: 'column',justifyContent:'center'}}>
-                                        <Text style={styles.ttitle}>{username}</Text>
-                                    </View>
-                                    <View style={{flexDirection: 'column',justifyContent:'center'}}>
-                                        <Button
-                                            titleStyle={styles.bTitle}
-                                            containerStyle={styles.bContainer}
-                                            title="Aceptar"
-                                            type="outline"
-                                            onPress={()=>{this.props.navigation.navigate('UserInfo',{'hola':'Agus'})}}
-                                        />
-                                    </View>  
-                                    <View style={{flexDirection: 'column',justifyContent:'center'}}>
-                                        <Button
-                                            titleStyle={styles.bTitle}
-                                            containerStyle={styles.bContainer}
-                                            title="Rechazar"
-                                            type="outline"
-                                            onPress={()=>{this.rejectUser()}}
-                                        /> 
-                                    </View>
-                                    
-                                </View>
+                                    <TouchableOpacity key={i} onPress={()=>this.props.navigation.navigate('UserInfo',user)}>
+                                    <ListItem key={i} bottomDivider >
+                                        <Icon name={"md-person-add"} type='ionicon'/>
+                                      <ListItem.Content>
+                                        <ListItem.Title>{user.username}</ListItem.Title>
+                                      </ListItem.Content>
+                                      <ListItem.Chevron color ="#f6b93b">
+                                      </ListItem.Chevron>
+                                    </ListItem>
+                                  </TouchableOpacity>
                                 );
                             })
                             

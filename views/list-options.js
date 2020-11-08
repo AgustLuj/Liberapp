@@ -3,8 +3,7 @@ import { StyleSheet, View,TextInput,TouchableOpacity } from 'react-native';
 import User from '../components/user';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import AsyncStorage  from '@react-native-community/async-storage' ;
-import { Input, Text, Button } from 'react-native-elements';
-import { Header,ListItem, Icon } from 'react-native-elements';
+import { Input, Text, Button, Header,ListItem, Icon } from 'react-native-elements';
 
 speed();
 var userData;

@@ -176,6 +176,30 @@ class User{
     }
     
   }
+  async acceptUser(_id,userId,fn){
+    let querry = await fetch(`${pagina}/newusers/acceptuser`, {
+      method: 'POST',
+      body: JSON.stringify({_id,userId}),
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const data = await querry.json();
+    if(querry.status != 200){
+      if(data['err']){
+        fn(true, false);
+      }
+    }else{
+      if(data['user'] != null){
+        fn(false,data['user']);
+      }else{
+        fn(true, null);
+      }
+      
+    } 
+  }
 }
 
 export default new User;
