@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { StyleSheet, View,TextInput,TouchableOpacity, ScrollView,RefreshControl } from 'react-native';
+import React, { Component,useEffect } from 'react';
+import { StyleSheet, View,TextInput,TouchableOpacity, ScrollView,RefreshControl,Alert } from 'react-native';
 import User from '../components/user';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import AsyncStorage  from '@react-native-community/async-storage' ;
@@ -26,6 +26,24 @@ class List_Options extends Component{
 
         }
     }
+    async rejectUser(id){
+        this.setState({cargando:true});
+        await User.rejectUser(global.value._id,id,(err,usera)=>{
+            if(!err){
+                if(usera){
+                    let title = `El usuario ${this.props.route.params.username} fue rechazado en la comunidad`;
+                    let msg1 ='Esta decicion puede ser cambiada en un futuro';
+                    let msg2 = ''
+                    let msg3 = '';
+                    this.setState({cargando:false,title,msg1,msg2,msg3,f:true});
+                }
+                
+                //console.log(usera);
+            }else{
+                this.setState({cargando:true,errg:true});
+            }
+        })
+    }
     async acceptUser(id){
         this.setState({cargando:true})
         await User.acceptUser(global.value._id,id,(err,usera)=>{
@@ -35,7 +53,7 @@ class List_Options extends Component{
                 let msg2 = ''
                 let msg3 = `Los datos nuevos de ${this.props.route.params.username} son : \n\nDni:${usera.dni}\n\nSeguimineto : ${usera.seg}\n`;
                 this.setState({cargando:false,title,msg1,msg2,msg3,f:true});
-                console.log(usera);
+                //console.log(usera);
             }else{
                 this.setState({cargando:true,errg:true});
             }
@@ -82,14 +100,18 @@ class List_Options extends Component{
                                     containerStyle={styles.bContainer}
                                     title="Cambiar"
                                     type="outline"
-                                    onPress={()=>{this.props.navigation.navigate("Config")}}
+                                    onPress={()=>{/*this.props.navigation.navigate("Config",this.props.route.params)*/
+                                    Alert.alert(
+                                        "Avertencia",
+                                        "Funcion en construccion",
+                                      )}}
                                 />
                                 <Button
                                     titleStyle={styles.bTitle}
                                     containerStyle={styles.bContainer}
                                     title="Rechazar"
                                     type="outline"
-                                    onPress={()=>{this.rejectUser()}}
+                                    onPress={()=>{this.rejectUser(_id)}}
                                 /> 
                             </View>:<Button
                                 titleStyle={styles.bTitle}
@@ -102,7 +124,7 @@ class List_Options extends Component{
                         </View>
                         
                     :errg?<View>
-                            <Text style={styles.ttitle}>Algo Salio mal intentar nuevamente</Text>
+                            <Text style={styles.ttitle}>Algo Salio mal intentar nuevamente{"\n"}</Text>
                             <Button
                                 titleStyle={styles.bTitle}
                                 containerStyle={styles.bContainer}

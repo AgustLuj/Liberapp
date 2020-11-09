@@ -23,6 +23,16 @@ class List_Options extends Component{
             f:true,
         }
     }
+    componentDidMount() {
+        //this.startData();
+
+        this.focusListener = this.props.navigation.addListener('focus', () => {
+            //this.startData();
+            this._onRefresh()
+            //console.log("hola")
+            //Put your Data loading function here instead of my this.LoadData()
+        });
+    }
     async loadUsers(fn){
         await User.getDataNewUser(global.value._id,(err,d)=>{
             if(!err){
@@ -38,7 +48,6 @@ class List_Options extends Component{
     _onRefresh = () => {
         this.setState({refreshing: true});
         this.setState({cargando:true})
-        this.noticias = []
         this.loadUsers(()=>{
             this.setState({refreshing: false});
         });

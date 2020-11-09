@@ -19,6 +19,7 @@ class login extends Component{
         this.segRegex=/[0-9]*-[0-9]*/;
 
         this.state = {
+            f:(this.props.route.params != null)?true:false,
         }
     }
     async componentDidMount(){
@@ -80,18 +81,6 @@ class login extends Component{
             
         }
     }
-    changeName(text){
-        this.name=text;
-    }
-    changeUserText(text){
-        this.user=text;
-    }
-    changeSeg(text){
-        this.seg=text;
-    }
-    changeSegOld(text){
-        this.segOld=text;
-    }
     render(){
             let {name,dni,username,err,err2,errg} = this.state;
             return (
@@ -120,7 +109,7 @@ class login extends Component{
                                 color='#f6b93b'
                             />
                         }
-                        onChangeText={text => this.changeName(text)}
+                        onChangeText={text => this.name=text}
                     />
                     <Input
                         containerStyle={styles.tImput}
@@ -134,7 +123,7 @@ class login extends Component{
                             />
                         }
                         maxLength={40}
-                        onChangeText={text => this.changeUserText(text)}
+                        onChangeText={text => this.user=text}
                     />
                     <Input
                         containerStyle={styles.tImput}
@@ -149,7 +138,7 @@ class login extends Component{
                             />
                         }
                         maxLength={9}
-                        onChangeText={text => this.changeSegOld(text)}
+                        onChangeText={text => this.seg=text}
                         errorMessage={err?'Codigo de seguimiento incorrecto':null}
                     />
                     <Input
@@ -165,7 +154,7 @@ class login extends Component{
                             />
                         }
                         maxLength={9}
-                        onChangeText={text => this.changeSeg(text)}
+                        onChangeText={text => this.segOld=text}
                         errorMessage={err2?'Ingresar correctamente el codigo de seguimiento':null}
                     />
                     <Button
