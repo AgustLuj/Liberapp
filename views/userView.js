@@ -89,7 +89,7 @@ class login extends Component{
     }
     async userVote(id,i,j){
         console.log(id);
-        User.userVote(this._id,id,(err, d)=>{
+        User.userVote(id,(err, d)=>{
             //console.log(d);
             this.noticias[i]=d;
             setTimeout(()=>{

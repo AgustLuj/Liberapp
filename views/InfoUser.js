@@ -1,5 +1,5 @@
 import React, { Component,useEffect } from 'react';
-import { StyleSheet, View,TextInput,TouchableOpacity, ScrollView,RefreshControl,Alert } from 'react-native';
+import { StyleSheet, View,TextInput,TouchableOpacity, ScrollView,RefreshControl,Alert,Clipboard } from 'react-native';
 import User from '../components/user';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import AsyncStorage  from '@react-native-community/async-storage' ;
@@ -28,7 +28,7 @@ class List_Options extends Component{
     }
     async rejectUser(id){
         this.setState({cargando:true});
-        await User.rejectUser(global.value._id,id,(err,usera)=>{
+        await User.rejectUser(id,(err,usera)=>{
             if(!err){
                 if(usera){
                     let title = `El usuario ${this.props.route.params.username} fue rechazado en la comunidad`;
@@ -46,12 +46,13 @@ class List_Options extends Component{
     }
     async acceptUser(id){
         this.setState({cargando:true})
-        await User.acceptUser(global.value._id,id,(err,usera)=>{
+        await User.acceptUser(id,(err,usera)=>{
             if(!err){
                 let title = `El usuario ${this.props.route.params.username} fue aceptado en la comunidad`;
                 let msg1 ='';
                 let msg2 = ''
                 let msg3 = `Los datos nuevos de ${this.props.route.params.username} son : \n\nDni:${usera.dni}\n\nSeguimineto : ${usera.seg}\n`;
+                Clipboard.setString(`Tu AdorDNI es: ${usera.dni}\nNro. de seguimiento (privado): ${usera.seg}`)
                 this.setState({cargando:false,title,msg1,msg2,msg3,f:true});
                 //console.log(usera);
             }else{
@@ -84,7 +85,7 @@ class List_Options extends Component{
                             <View>
                                 <Text style={styles.ttitle}>{title}</Text>
                                 <Text style={{color:'red',fontSize:hp('2%'),marginTop:hp('1.8%')}}>{msg1}</Text>  
-                                <Text style={{color:'red',fontSize:hp('2%'),marginTop:hp('1.8%')}}>{msg2} </Text>  
+                                <Text style={{color:'red',fontSize:hp('2%'),marginTop:hp('1.8%')}}>{msg2} </Text>
                                 <Text style={{color:'black',fontSize:hp('3%'),marginTop:hp('1.8%')}}>{msg3}</Text>  
                             </View>
                             {!f?<View style={{flexDirection:'row',justifyContent:'space-around'}}>  

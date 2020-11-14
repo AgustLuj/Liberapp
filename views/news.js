@@ -20,7 +20,7 @@ class News extends Component{
         }
     }
     async loadNews(fn){
-        await User.newsHome((err,d)=>{
+        await User.allnews((err,d)=>{
             if(!err){
                 this.setState({'errg':true});
             }else{

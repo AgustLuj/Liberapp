@@ -10,54 +10,80 @@ import AsyncStorage  from '@react-native-community/async-storage'
 class Search extends Component{
     constructor(props){
         super(props);
-        this.name='';
-        this.user='';
-        this.seg='';
         this.dni='';
-
+        this.user='';
         this.dniregex=/\d\d\d\d\d\d/;
         this.segRegex=/[0-9]*-[0-9]*/;
 
         this.state = {
+            search:false,
+            errD:false,
+            err2:false,
         }
     }
     async searchUser(){
-        if(this.dni != ''&& this.dniregex.test(this.dni)){
-            this.setState({'errD':false})
-            console.log(this.seg)
-            if(this.seg != '' && this.segRegex.test(this.seg)){
-                this.setState({'errS':false})
-                if(this.dni != null && this.seg != null){
-                    console.log("hola")
+        
+        if((this.dni == null && this.user == null)||(this.dni.length === 0 && this.user.length === 0)){
+            this.setState({'errD':true})
+            this.setState({'err2':true})
+            return null
+        }
+        if(this.seg != null){
+            if(this.state.errD)this.setState({'errD':false});            
+            if(this.state.err2)this.setState({'err2':false});
+
+            if(!this.segRegex.test(this.seg)){
+                this.setState({'errS':true})
+                console.log('hola2')
+                return null
+            }
+            
+
+            if(!this.dniregex.test(this.dni) && this.dni.length != 0){
+                this.setState({'errD':true})
+                return null;
+            }
+            this.setState({info:null})
+            await User.checkPass(this.seg,async(e)=>{
+                if(e){
+                    if(this.state.errS)this.setState({'errS':false});
+                    User.search(this.dni,this.user,(d,user)=>{
+                        if(d){
+                            this.setState(user);
+                            this.setState({search:true});
+                        }else{
+                            this.setState({info:user})
+                        }
+                    })         
                 }else{
                     this.setState({'errS':true})
-                }
-            }else{
-                this.setState({'errS':true,'info':" "})
-            }
+                    return null
+                }  
+            })
+             
         }else{
-            this.setState({'errD':true,'info':" "})
+            if(!(this.segRegex.test(this.seg))||this.seg === null){
+                this.setState({'errS':true})
+                console.log('hola1')
+                return null
+            }
         }
     }
     checkSeg(d,fn){
-        if(!this.segRegex.test(d)){
-            fn(false)
+        if(d != null){
+            if(!this.segRegex.test(d)){
+                fn(false)
+            }else{
+                fn(true)
+            }
         }else{
-            fn(true)
-            
+            fn(false)
         }
-    }
-    searchName(text){
-        this.dni=text;
-    }
-    searchUserText(text){
-        this.user=text;
-    }
-    searchSeg(text){
-        this.seg=text;
+        
     }
     render(){
-            let {name,dni,username,err,err2,errg,errD,errS}= this.state
+            let {name,dni,username,verificado,editor,carnet,err,err2,errg,errD,errS,search,cargando,info}= this.state;
+            //console.log(this.state);
             return (
                 <View style = {{flex:1,backgroundColor:"white"}}>
                     <Header
@@ -71,72 +97,96 @@ class Search extends Component{
                         }}
                         
 		            />
-                    <View style = {{flex: 1.5,backgroundColor: 'white',alignItems:'center',marginTop:hp("3%"),marginLeft:hp("2%"),marginRight:hp("2%")}}>
-                    {errg?<Text style={{color:'red'}}>Algo Salio mal intentar nuevamente</Text>:null}
-                    <Input
-                        containerStyle={styles.tImput}
-                        placeholder='100000'
-                        label="Dni:"
-                        leftIcon={
-                            <Icon
+                    <View style = {{flex: 1.5,backgroundColor: 'white',marginTop:hp("3%"),marginLeft:hp("2%"),marginRight:hp("2%")}}>
+                    {errg?<View>
+                            <Text style={{color:'red'}}>Algo Salio mal intentar nuevamente{'\n'}</Text>
+                            <Button
+                                titleStyle={styles.bTitle}
+                                containerStyle={styles.bContainer}
+                                title="Volver"
+                                type="outline"
+                                onPress={()=>{this.props.navigation.goBack()}}
+                            /> 
+                        </View>:(cargando)?<View style={{alignItems:'center'}}><Text style={styles.ttitle}>{errg?'Algo Salio mal intentar nuevamente':'Cargando'}</Text></View>:
+                    (!search)?<View>
+                        {(info!=null)?<Text style={{color:'red'}}>{info}{'\n'}</Text>:null}
+                        <Text style={{color:'red',fontSize:hp('2%')}}>Es necesario ingresar cualquiera de los dos puede ser el dni o el username y tu numero de seguimiento</Text>
+                        <Text style={{color:'red'}}>Algo Salio mal intentar nuevamente{'\n'}</Text> 
+                        <Input
+                            containerStyle={styles.tImput}
+                            placeholder='100000'
+                            label="Dni:"
+                            leftIcon={
+                                <Icon
+                                    name='address-card-o'
+                                    size={24}
+                                    color='#f6b93b'
+                                />
+                            }
+                            onChangeText={text => this.dni=text}
+                            errorMessage={errD?'Formato del Dni incorrecto':null}
+                        />
+                    
+                        <Input
+                            containerStyle={styles.tImput}
+                            placeholder='LiiberApp'
+                            label="Usuario:"
+                            leftIcon={
+                                <Icon
+                                    name='user-o'
+                                    size={24}
+                                    color='#f6b93b'
+                                />
+                            }
+                            maxLength={40}
+                            onChangeText={text => this.user=text}
+                            errorMessage={err2?'Debe ingresar algo si deja el dni vacio':null}
+                        />
+                        <Input
+                            containerStyle={styles.tImput}
+                            label="N° de seguimiento propio"
+                            placeholder='xxxx-xxxx'
+                            keyboardType = 'numeric'
+                            leftIcon={
+                                <Icon
                                 name='address-card-o'
-                                size={24}
+                                size={20}
                                 color='#f6b93b'
-                            />
-                        }
-                        onChangeText={text => this.searchName(text)}
-                        errorMessage={errD?'Formato del Dni incorrecto':null}
-                    />
-                    <Input
-                        containerStyle={styles.tImput}
-                        placeholder='Ingresar Username'
-                        label="Usuario:"
-                        leftIcon={
-                            <Icon
-                                name='user-o'
-                                size={24}
-                                color='#f6b93b'
-                            />
-                        }
-                        maxLength={40}
-                        onChangeText={text => this.searchUserText(text)}
-                        errorMessage={err?'Usermame no existe':null}
-                    />
-                    <Input
-                        containerStyle={styles.tImput}
-                        label="N° de seguimiento"
-                        placeholder='xxxx-xxxx'
-                        keyboardType = 'numeric'
-                        leftIcon={
-                            <Icon
-                            name='address-card-o'
-                            size={20}
-                            color='#f6b93b'
-                            />
-                        }
-                        maxLength={9}
-                        onChangeText={text => this.searchSeg(text)}
-                        errorMessage={errS?'Codigo de seguimiento incorrecto':null}
-                    />
-                    <Button
-                        titleStyle={styles.bTitle}
-                        containerStyle={styles.bContainer}
-                        title="Buscar datos"
-                        type="outline"
-                        onPress={()=>{this.searchUser()}}
-                    />
-                    </View>
+                                />
+                            }
+                            maxLength={9}
+                            onChangeText={text => this.seg=text}
+                            errorMessage={errS?'Codigo de seguimiento incorrecto':null}
+                        />
+                        <Button
+                            titleStyle={styles.bTitle}
+                            containerStyle={styles.bContainer}
+                            title="Buscar datos"
+                            type="outline"
+                            onPress={()=>{this.searchUser()}}
+                        />
+                    </View>:
                     <ScrollView style={{flex: 1,backgroundColor: 'white',flexDirection: 'column'}}>
-                        <View style = {{flex: 1,backgroundColor: 'white',flexDirection: 'column', borderTopWidth:3,borderTopColor:'#bdc3c7'}}>
+                        <View style = {{flex: 1,backgroundColor: 'white',flexDirection: 'column'}}>
                             <Text style={styles.ttitle}>Datos recuperados</Text>
-                            <Text style={{color:'black',fontSize:hp('3%'),marginTop:hp('1.8%')}}>Dni:</Text>  
-                            <Text style={{color:'black',fontSize:hp('3%'),marginTop:hp('1.5%')}}>Username:</Text>  
-                            <Text style={{color:'black',fontSize:hp('3%'),marginTop:hp('1.5%')}}>Verificado:</Text>  
-                            <Text style={{color:'black',fontSize:hp('3%'),marginTop:hp('1.5%')}}>Editor:</Text>
-                            <Text style={{color:'black',fontSize:hp('3%'),marginTop:hp('1.5%')}}>Carnet:</Text>
-                            <Text style={{color:'black',fontSize:hp('3%'),marginTop:hp('1.5%')}}>Datos Actualizados:</Text>
+                            <Text style={{color:'black',fontSize:hp('3%'),marginTop:hp('1.8%')}}>Dni:{dni}</Text>
+                            <Text style={{color:'black',fontSize:hp('3%'),marginTop:hp('1.8%')}}>Name:{name}</Text>  
+                            <Text style={{color:'black',fontSize:hp('3%'),marginTop:hp('1.5%')}}>Username:{username}</Text>  
+                            <Text style={{color:'black',fontSize:hp('3%'),marginTop:hp('1.5%')}}>Verificado:{(!verificado)?'No':'Si'}</Text>  
+                            <Text style={{color:'black',fontSize:hp('3%'),marginTop:hp('1.5%')}}>Editor:{(!editor)?'No':'Si'}</Text>
+                            <Text style={{color:'black',fontSize:hp('3%'),marginTop:hp('1.5%')}}>Carnet:{(!carnet)?'No':'Si'}</Text>
                         </View>
-                    </ScrollView> 
+                        <Button
+                                titleStyle={styles.bTitle}
+                                containerStyle={styles.bContainer}
+                                title="Volver"
+                                type="outline"
+                                onPress={()=>{this.props.navigation.goBack()}}
+                            />
+                    </ScrollView>}
+                    
+                    </View>
+                    
                 </View>
                 
                 

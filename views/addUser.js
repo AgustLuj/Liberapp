@@ -34,7 +34,7 @@ class List_Options extends Component{
         });
     }
     async loadUsers(fn){
-        await User.getDataNewUser(global.value._id,(err,d)=>{
+        await User.getDataNewUser((err,d)=>{
             if(!err){
                 this.setState({'errg':true});
             }else{

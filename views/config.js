@@ -37,10 +37,10 @@ class login extends Component{
     async changeUser(){
         await this.checkSeg(this.segOld,async (d)=>{
             if(d){
-                await User.checkPass(this.dni,this.segOld,async(e)=>{
+                await User.checkPass(this.segOld,async(e)=>{
                     if(e){
                         if(this.seg === ''){
-                            this.changeDb(this.dni,this.name,this.user,this.seg,this.segOld);
+                            this.changeDb(this.name,this.user,this.seg,this.segOld);
                         }else{
                           await this.checkSeg(this.seg,async(d)=>{
                             if(d){
@@ -63,8 +63,8 @@ class login extends Component{
             
         });
     }
-    async changeDb(dni,name,user,seg,segOld){
-        await User.changeUser(dni,name,user,seg,segOld,async (f)=>{
+    async changeDb(name,user,seg,segOld){
+        await User.changeUser(name,user,seg,segOld,async (f)=>{
             if(f){
                 await AsyncStorage.removeItem('@UserData');
                 this.props.navigation.replace('LoginFinish')

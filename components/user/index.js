@@ -1,18 +1,6 @@
 const pagina = 'https://adordni.ml';
 //const pagina = 'http://192.168.100.42:3000';
-
 class User{
-  async online(fn){
-    const querry = await fetch(pagina, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      }
-    });
-    const data = await querry.json();
-    fn(data.anda);
-  }
   async getData(dni,seg,fn){
     let querry = await fetch(`${pagina}/users/ingresar`, {
         method: 'POST',
@@ -41,10 +29,11 @@ class User{
     
   }
   
-  async changeUser(dni,name,usern,seg,segold,fn){
+  async changeUser(name,usern,seg,segold,fn){
+    let _id = global.value._id;
     const querry = await fetch(`${pagina}/users/changeUser`,{
       method:'POST',
-      body: JSON.stringify({dni,name,usern,seg,segold}),
+      body: JSON.stringify({_id,name,usern,seg,segold}),
       headers:{
         Accept:'application/json',
         'Content-Type':'application/json',
@@ -58,11 +47,11 @@ class User{
       fn(true);
     }
   }
-  async checkPass(dni,seg,fn){
-    //console.log(dni,seg)
+  async checkPass(seg,fn){
+    let _id = global.value._id;
     const querry = await fetch(`${pagina}/users/checkPass`,{
       method:'POST',
-      body: JSON.stringify({dni,seg}),
+      body: JSON.stringify({_id,seg}),
       headers:{
         Accept:'application/json',
         'Content-Type':'application/json',
@@ -75,24 +64,30 @@ class User{
       fn(true);
     } 
   }
-  async getOnlyData(dni,fn){
-    let querry = await fetch(`${pagina}/users/getData`, {
-      method: 'POST',
-      body: JSON.stringify({dni}),
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
+  async search(dni,username,fn){
+    let _id = global.value._id;
+    const querry = await fetch(`${pagina}/users/search`,{
+      method:'POST',
+      body: JSON.stringify({dni,username,_id}),
+      headers:{
+        Accept:'application/json',
+        'Content-Type':'application/json',
       }
     });
     const data = await querry.json();
+    console.log(data);
     if(querry.status != 200){
+      if(data['err'] != null){
+        fn(false,data['err']);
+      }
       if(data['err'] === true){
         fn(false,null);
       }
     }else{
-      if(null !== data['user']){
+      if(null != data['user']){
         fn(true,data['user']);
       }else{
+        console.log(data,'a');
         fn(false,null);
       }
     }
@@ -131,10 +126,11 @@ class User{
     } 
     
   }
-  async userVote(idU,idV,fn){
+  async userVote(idV,fn){
+    let _id = global.value._id;
     const querry = await fetch(`${pagina}/votes/userVote`,{
       method:'POST',
-      body:JSON.stringify({idU,idV}),
+      body:JSON.stringify({_id,idV}),
       headers:{
         Accept:'application/json',
         'Content-Type':'application/json',
@@ -149,7 +145,8 @@ class User{
     } 
     
   }
-  async getDataNewUser(_id,fn){
+  async getDataNewUser(fn){
+    let _id = global.value._id;
     let querry = await fetch(`${pagina}/newusers/data`, {
         method: 'POST',
         body: JSON.stringify({_id}),
@@ -176,7 +173,8 @@ class User{
     }
     
   }
-  async acceptUser(_id,userId,fn){
+  async acceptUser(userId,fn){
+    let _id = global.value._id;
     let querry = await fetch(`${pagina}/newusers/acceptuser`, {
       method: 'POST',
       body: JSON.stringify({_id,userId}),
@@ -200,7 +198,8 @@ class User{
       
     } 
   }
-  async rejectUser(_id,userId,fn){
+  async rejectUser(userId,fn){
+    let _id = global.value._id;
     let querry = await fetch(`${pagina}/newusers/rejectUser`, {
       method: 'POST',
       body: JSON.stringify({_id,userId}),

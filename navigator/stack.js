@@ -13,6 +13,7 @@ import {
 import AsyncStorage  from '@react-native-community/async-storage';
 import Routes from './stackRoutes';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import User from '../components/user';
 
 speed();
 var userData;
