@@ -150,6 +150,7 @@ class drawerScreen extends Component{
 			<Drawer.Screen name="Carnet" component={Routes.Dni} />
 			<Drawer.Screen name="Noticias" component={Routes.News}/>
 			<Drawer.Screen name="Votaciones" component={Routes.Votes} />
+			{(global.mes == 12 && global.dia>8 )?<Drawer.Screen  name="Navidad" component={Routes.Navidad} options={{ drawerLabel: 'Evento de Navidad' }} />:null}
 			</Drawer.Navigator>
 		);
 	}
@@ -195,6 +196,7 @@ class AppStack extends Component{
 		let value = await AsyncStorage.getItem('@UserData');
 		if(null !== value){
 			global.value=JSON.parse(value);
+			User.lastConnection();
 			this.setState({'d':true,'ver':value.verificado})
 		}else{
 			global.value=value;

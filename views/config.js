@@ -34,25 +34,23 @@ class login extends Component{
             admin
         })
     }
-    async changeUser(){
+    async changeUser(){/// re hacer config a base de search.js
         await this.checkSeg(this.segOld,async (d)=>{
+            console.log(this.segOld);
             if(d){
                 await User.checkPass(this.segOld,async(e)=>{
                     if(e){
                         if(this.seg === ''){
                             this.changeDb(this.name,this.user,this.seg,this.segOld);
                         }else{
-                          await this.checkSeg(this.seg,async(d)=>{
-                            if(d){
-                                this.changeDb(this.dni,this.name,this.user,this.seg,this.segOld);                   
-                            }else{
-                                this.setState({'err2':true})  
-                            }
-                            
-                        });  
-                        }
-                        
-                        
+                            await this.checkSeg(this.seg,async(f)=>{
+                                if(f){
+                                    this.changeDb(this.dni,this.name,this.user,this.seg,this.segOld);                   
+                                }else{
+                                    this.setState({'err2':true})  
+                                }
+                            });  
+                        } 
                     }else{
                         this.setState({'err':true})
                     }  
@@ -138,9 +136,9 @@ class login extends Component{
                             />
                         }
                         maxLength={9}
-                        onChangeText={text => this.seg=text}
+                        onChangeText={text => this.segOld=text}
                         errorMessage={err?'Codigo de seguimiento incorrecto':null}
-                    />
+                        />
                     <Input
                         containerStyle={styles.tImput}
                         label="Nuevo N° de seguimiento"
@@ -154,7 +152,7 @@ class login extends Component{
                             />
                         }
                         maxLength={9}
-                        onChangeText={text => this.segOld=text}
+                        onChangeText={text => this.seg=text}
                         errorMessage={err2?'Ingresar correctamente el codigo de seguimiento':null}
                     />
                     <Button

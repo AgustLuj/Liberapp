@@ -147,16 +147,16 @@ class login extends Component{
                         borderBottomWidth:1
                     }}
                 />
-                <View style = {{flex: 1,backgroundColor: 'white',flexDirection: 'column'}} >
-                    <View style = {{flex: 0.9,backgroundColor: 'white',flexDirection: 'row'}}>
-                        <View style = {{flex: 1,backgroundColor: 'white',flexDirection: 'row'}}>
+                <View style = {{flex: 1,flexDirection: 'column'}} >
+                    <View style = {{flex: 0.9,flexDirection: 'row'}}>
+                        <View style = {{flex: 1,flexDirection: 'row'}}>
                         <Image 
                             resizeMode="contain" 
                             style={styles.dni} 
                             source={{
                                 uri:link}} />
                         </View>
-                        <View style = {{flex: 1.45,backgroundColor: 'white',flexDirection: 'column'}}>
+                        <View style = {{flex: 1.45,flexDirection: 'column'}}>
                             <Text style={styles.ttitle}>Bienvenido!!</Text>    
                             <Text style={styles.text}>{this.name}</Text>
                             <Text style={styles.text}>Tu dni es:{this.dni}</Text>
@@ -165,11 +165,11 @@ class login extends Component{
                             {this.admin?<Text style={styles.text}>Sos Admin</Text> :null} 
                         </View>
                     </View>
-                    <View style = {{flex: 0.3,backgroundColor: 'white',flexDirection: 'row', borderTopWidth:3,borderTopColor:'#bdc3c7'}}>
+                    <View style = {{flex: 0.3,flexDirection: 'row', borderTopWidth:3,borderTopColor:'#bdc3c7'}}>
                         <Text style={{color:'black',fontSize:hp('5%'),marginTop:hp('1%')}}>Noticias</Text>                       
                     </View>
-                    <View style = {{flex: 2.3,backgroundColor: 'white',flexDirection: 'column',marginLeft:hp('1.5%')}}>
-                    <ScrollView style={{flex: 1,backgroundColor: 'white',flexDirection: 'column'}} refreshControl={
+                    <View style = {{flex: 2.3,flexDirection: 'column',marginLeft:hp('1.5%')}}>
+                    <ScrollView style={{flex: 1,flexDirection: 'column'}} refreshControl={
                         <RefreshControl
                             refreshing={this.state.refreshing}
                             onRefresh={this._onRefresh}
@@ -180,7 +180,7 @@ class login extends Component{
                         this.noticias.map(({title,text,type,options},i)=>{
                             if(type == 1){
                                 return(
-                                    <View key={i} style = {{flex: 1,backgroundColor: 'white',borderBottomWidth:1,borderBottomColor:'black',paddingBottom:hp('2%')}}>
+                                    <View key={i} style = {{flex: 1,borderBottomWidth:1,borderBottomColor:'black',paddingBottom:hp('2%')}}>
                                             <Text style={styles.ttitle}>Encuesta</Text>
                                             <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('5%')}}>{text}</Text>
                                             {(options.users.findIndex(({id}) => id == _id )) === -1 ? <RadioForm
@@ -234,7 +234,7 @@ class login extends Component{
                                 )
                             }else if(type == 0){
                                 return(
-                                    <View key={i} style = {{flex: 1,backgroundColor: 'white',flexDirection: 'column',borderBottomWidth:1,borderBottomColor:'black',paddingBottom:hp('2%') }}>
+                                    <View key={i} style = {{flex: 1,flexDirection: 'column',borderBottomWidth:1,borderBottomColor:'black',paddingBottom:hp('2%') }}>
                                         <Text style={styles.ttitle}>{title}</Text>
                                         <Text style={{color:'black',fontSize:hp('3%'),marginLeft:hp('5%')}}>{text}</Text>
                                     </View>

@@ -9,6 +9,7 @@ import Search from '../views/search';
 import Warning from '../views/warning';
 import addUser from '../views/addUser';
 import infoUser from '../views/InfoUser';
+import Navidad from '../views/navidad';
 
 export default {
     Login,
@@ -21,5 +22,6 @@ export default {
     Search,
     Warning,
     addUser,
-    infoUser
+    infoUser,
+    Navidad
 };
