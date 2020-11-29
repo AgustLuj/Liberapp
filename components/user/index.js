@@ -1,5 +1,5 @@
-// const pagina = 'https://adordni.ml';
-const pagina = 'http://192.168.100.42:3000';
+const pagina = 'https://adordni.ml';
+//const pagina = 'http://192.168.100.42:3000';
 class User{
   async getData(dni,seg,fn){
     let querry = await fetch(`${pagina}/users/ingresar`, {
@@ -231,6 +231,31 @@ class User{
         fn(false,true);
       }else{
         fn(true, null);
+      }
+      
+    } 
+  }
+  async navidad(fn){
+    let _id = global.value._id;
+    let querry = await fetch(`${pagina}/users/navidad`, {
+      method: 'POST',
+      body: JSON.stringify({_id}),
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const data = await querry.json();
+    if(querry.status != 200){
+      if(data['err']){
+        fn(false);
+      }
+    }else{
+      if(!data['err']){
+        fn(true);
+      }else{
+        fn(false);
       }
       
     } 

@@ -5,8 +5,8 @@ import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-nativ
 import AsyncStorage  from '@react-native-community/async-storage' ;
 import { Input, Text, Button } from 'react-native-elements';
 import { Header,ListItem, Icon } from 'react-native-elements';
-import CameraRoll from '@react-native-community/cameraroll';
-import RNFetchBlob from 'rn-fetch-blob';
+import SavePhoto from '../components/savePhotos';
+import savePhotos from '../components/savePhotos';
 
 speed();
 var userData;
@@ -18,79 +18,30 @@ class Navidad extends Component{
         super(props);
         this.state= {
           name:null,
+          uri:false,
         }
         
     }
-    async getPermissionAndroid(){
-        try {
-          const granted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-            {
-              title: 'Image Download Permission',
-              message: 'Your permission is required to save images to your device',
-              buttonNegative: 'Cancel',
-              buttonPositive: 'OK',
-            },
+    async navidad(){
+      global.navidad=false;
+      await User.navidad( async(d)=>{
+        if(d){
+          this.setState({uri:true});
+          global.navidad=false;
+          await AsyncStorage.setItem(
+            'Navidad',
+            JSON.stringify({'Navidad':true})
           );
-          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-            return true;
-          }
-          Alert.alert(
-            'Save remote Image',
-            'Grant Me Permission to save Image',
-            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
-            {cancelable: false},
-          );
-        } catch (err) {
-          Alert.alert(
-            'Save remote Image',
-            'Failed to save Image: ' + err.message,
-            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
-            {cancelable: false},
-          );
+        }else{
+          this.setState({uri:false});
+          global.navidad=false;
         }
+      })
     }
-    async handleDownload(){
-        if (Platform.OS === 'android') {
-            const granted = await this.getPermissionAndroid();
-            if (!granted) {
-              return;
-            }
-          }
-          RNFetchBlob.config({
-            fileCache: true,
-            appendExt: 'png',
-          })
-            .fetch('GET', 'https://adordni.ml/img/AgustLuj111239.png')
-            .then(res => {
-                CameraRoll.save(res.data, 'photo')
-                .then(() => {
-                  Alert.alert(
-                    'Save remote Image',
-                    'Image Saved Successfully',
-                    [{text: 'OK', onPress: () => console.log('OK Pressed')}],
-                    {cancelable: false},
-                  );
-                })
-                .catch(err => {
-                  Alert.alert(
-                    'Save remote Image',
-                    'Failed to save Image: ' + err.message,
-                    [{text: 'OK', onPress: () => console.log('OK Pressed')}],
-                    {cancelable: false},
-                  );
-                })
-                .finally(() => this.setState({saving: false}));
-            })
-            .catch(error => {
-              this.setState({saving: false});
-              Alert.alert(
-                'Save remote Image',
-                'Failed to save Image: ' + error.message,
-                [{text: 'OK', onPress: () => console.log('OK Pressed')}],
-                {cancelable: false},
-              );
-            });     
+    async savephoto(){
+      SavePhoto.handleDownload(`https://adordni.ml/img/${global.value.username}${global.value.dni}Navidad.png`,()=>{
+        this.props.navigation.goBack();
+      })
     }
     /*<View style={{justifyContent: 'center', alignItems: 'center'}}>
                         <Text style={{color:'#eb4d4b', fontSize:hp("10%")}}>Feliz Navidad</Text>
@@ -112,7 +63,7 @@ class Navidad extends Component{
                                 uri:`https://i.pinimg.com/originals/99/f9/96/99f996d8c2d9c5890f12457a570f093d.jpg`}} />  
                 */
     render(){
-        const {url, saving} = this.state;
+        const {url, saving,uri} = this.state;
         return (
             <View style = {{flex:1, backgroundColor:'#7bed9f',justifyContent:'space-between'}}>
                 <View>
@@ -129,21 +80,36 @@ class Navidad extends Component{
                     <View style={{justifyContent: 'center', alignItems: 'center'}}>
                         <Text style={{color:'#eb4d4b', fontSize:hp("10%")}}>Feliz Navidad</Text>
                         <Text style={{fontSize:hp("3%")}}>Ojala que estas navidades las puedan pasar en familia o junto con personas que aprecias para todos juntos disfrutar algo juntos de este año que fue de locos</Text>
-                        <Button
-                            titleStyle={styles.bTitle}
-                            containerStyle={styles.bContainer}
-                            title="Generar regalo"
-                            type="outline"
-                            onPress={()=>{this.handleDownload()}}
-                        />
-                    </View>
-                </View>
-                <View>
-                    <Image 
+                        {(uri)?<View style={{justifyContent: 'center', alignItems: 'center'}}><Image 
                             resizeMode="contain" 
                             style={styles.dni} 
                             source={{
-                                uri:`https://i.pinimg.com/originals/99/f9/96/99f996d8c2d9c5890f12457a570f093d.jpg`}} />
+                                uri:`https://adordni.ml/img/${global.value.username}${global.value.dni}Navidad.png`}} />
+                                <Button
+                            titleStyle={styles.bTitle}
+                            containerStyle={{
+                              width:wp('70%'),
+                              backgroundColor:'#eb4d4b',
+                              borderWidth: 1,
+                              borderTopLeftRadius: 20,
+                              borderTopRightRadius: 20,
+                              justifyContent: 'center', alignItems: 'center'
+                          }}
+                            title="Guardar Carnet"
+                            type="outline"
+                            onPress={()=>this.savephoto()}
+                        /></View>:<Button
+                        titleStyle={styles.bTitle}
+                        containerStyle={styles.bContainer}
+                        title="Generar regalo"
+                        type="outline"
+                        onPress={()=>{this.navidad()}}
+                    />}   
+                    </View>
+                </View>
+                
+                <View>
+                    
                 </View>
           </View>
         );
@@ -158,6 +124,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
+        justifyContent: 'center', alignItems: 'center'
     },
     bTitle:{
         fontSize:hp('5%'),
@@ -165,6 +132,9 @@ const styles = StyleSheet.create({
         margin:0,
         padding:0,
     },
+    dni:{
+      height: hp('40%'), width: wp('100%')
+  },
 });
 
 export default Navidad

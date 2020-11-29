@@ -47,12 +47,18 @@ class login extends Component{
                         }}
 		            />
                     <View style = {{flex: 10,backgroundColor: 'white',alignItems:'center'}}>
-                        <Text style={styles.text}>Tu Dni es: {dni} y numero de seguimiento es:{seguimiento} </Text>
+                        <Text style={styles.text}>Tu Dni es: {global.value.dni} </Text>
                         <Image 
                             resizeMode="contain" 
                             style={styles.dni} 
                             source={{
                                 uri:`https://adordni.ml/img/${imagen}`}} />
+                        
+                        {(global.navidad)?<Image 
+                            resizeMode="contain" 
+                            style={styles.dni} 
+                            source={{
+                                uri:`https://adordni.ml/img/${global.value.username}${global.value.dni}Navidad.png`}} />:null}
                     </View>
                 </View>);
             }
