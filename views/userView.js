@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, Image,ScrollView,RefreshControl } from 'react-native';
 import User from '../components/user';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import AsyncStorage  from '@react-native-community/async-storage' 
+import AsyncStorage  from '@react-native-async-storage/async-storage'
 import { Header } from 'react-native-elements';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import * as Progress from 'react-native-progress';

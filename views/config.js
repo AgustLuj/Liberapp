@@ -5,7 +5,7 @@ import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-nativ
 import { Header } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Input, Text, Button } from 'react-native-elements';
-import AsyncStorage  from '@react-native-community/async-storage' 
+import AsyncStorage  from '@react-native-async-storage/async-storage' 
 
 class login extends Component{
     constructor(props){
@@ -35,7 +35,25 @@ class login extends Component{
         })
     }
     async changeUser(){/// re hacer config a base de search.js
-        await this.checkSeg(this.segOld,async (d)=>{
+        if((this.segOld == null )||(this.name.length === 0 && this.user.length === 0 && this.seg.length === 0)){
+            this.setState({'errg':true})
+            return null;
+        }
+        this.setState({'errg':false})
+        if(this.segRegex.test(this.segOld)){
+            this.setState({'err':false});
+            this.setState({'err2':false});
+            if(!this.segRegex.test(this.seg) && this.seg.length != 0 ){
+                this.setState({'err2':true});
+                return null;
+            }
+            this.changeDb(this.name,this.user,this.seg,this.segOld);
+            return null;
+        }else{
+            this.setState({'err':true})  
+            return null;
+        }
+        /*await this.checkSeg(this.segOld,async (d)=>{
             console.log(this.segOld);
             if(d){
                 await User.checkPass(this.segOld,async(e)=>{
@@ -59,8 +77,56 @@ class login extends Component{
                 this.setState({'err':true})
             }
             
-        });
+        });*/
     }
+    /*async searchUser(){
+        
+        if((this.dni == null && this.user == null)||(this.dni.length === 0 && this.user.length === 0)){
+            this.setState({'errD':true})
+            this.setState({'err2':true})
+            return null
+        }
+        if(this.seg != null){
+            if(this.state.errD)this.setState({'errD':false});            
+            if(this.state.err2)this.setState({'err2':false});
+
+            if(!this.segRegex.test(this.seg)){
+                this.setState({'errS':true})
+                console.log('hola2')
+                return null
+            }
+            
+
+            if(!this.dniregex.test(this.dni) && this.dni.length != 0){
+                this.setState({'errD':true})
+                return null;
+            }
+            this.setState({info:null})
+            await User.checkPass(this.seg,async(e)=>{
+                if(e){
+                    if(this.state.errS)this.setState({'errS':false});
+                    User.search(this.dni,this.user,(d,user)=>{
+                        if(d){
+                            this.setState(user);
+                            this.setState({search:true});
+                        }else{
+                            this.setState({info:user})
+                        }
+                    })         
+                }else{
+                    this.setState({'errS':true})
+                    return null
+                }  
+            })
+             
+        }else{
+            if(!(this.segRegex.test(this.seg))||this.seg === null){
+                this.setState({'errS':true})
+                console.log('hola1')
+                return null
+            }
+        }
+    }*/
     async changeDb(name,user,seg,segOld){
         await User.changeUser(name,user,seg,segOld,async (f)=>{
             if(f){
@@ -72,12 +138,16 @@ class login extends Component{
         })
     }
     checkSeg(d,fn){
-        if(!this.segRegex.test(d)){
-            fn(false)
+        if(d != null || d.length !== 0){
+            if(!this.segRegex.test(d)){
+                fn(false)
+            }else{
+                fn(true)
+            }
         }else{
-            fn(true)
-            
+            fn(false)
         }
+        
     }
     render(){
             let {name,dni,username,err,err2,errg} = this.state;
@@ -94,8 +164,8 @@ class login extends Component{
                         }}
                         
 		            />
-                    <View style = {{flex: 10,backgroundColor: 'white',alignItems:'center',marginTop:hp("3%"),marginLeft:hp("2%"),marginRight:hp("2%")}}>
-                    {errg?<Text style={{color:'red'}}>Algo Salio mal intentar nuevamente</Text>:null}
+                    <View style = {{flex: 10,backgroundColor: 'white',alignItems:'center',marginTop:hp("2%"),marginLeft:hp("2%"),marginRight:hp("2%")}}>
+                    {errg?<Text style={{color:'red',marginBottom:hp('1%')}}>Ingrese un nuevo Seguimiento o Nombre o Usuario</Text>:null}
                     <Input
                         containerStyle={styles.tImput}
                         placeholder={name}

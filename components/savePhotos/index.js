@@ -44,6 +44,7 @@ class SavePhoto{
           })
             .fetch('GET',url)
             .then(res => {
+              console.log(res);
                 CameraRoll.save(res.data, 'photo')
                 .then(() => {
                   Alert.alert(

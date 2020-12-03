@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Image} from 'react-native';
+import { StyleSheet, View, Image,ScrollView} from 'react-native';
 import User from '../components/user';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import AsyncStorage  from '@react-native-community/async-storage' 
+import AsyncStorage  from '@react-native-async-storage/async-storage' 
 import { Header } from 'react-native-elements';
+import SavePhoto from '../components/savePhotos';
+import { Input, Text, Button } from 'react-native-elements';
 
 class login extends Component{
     constructor(props){
@@ -12,6 +14,11 @@ class login extends Component{
 
         }
     }
+    async savephoto(link){
+        SavePhoto.handleDownload(link,()=>{
+          this.props.navigation.goBack();
+        })
+      }
     async componentDidMount(){
         const {name,dni,imagen,seguimiento} =JSON.parse(await AsyncStorage.getItem('@UserData'));
         this.setState({
@@ -46,6 +53,7 @@ class login extends Component{
                             borderBottomColor:'#bdc3c7',
                         }}
 		            />
+                    <ScrollView style={{flex: 1,flexDirection: 'column'}}>
                     <View style = {{flex: 10,backgroundColor: 'white',alignItems:'center'}}>
                         <Text style={styles.text}>Tu Dni es: {global.value.dni} </Text>
                         <Image 
@@ -53,13 +61,40 @@ class login extends Component{
                             style={styles.dni} 
                             source={{
                                 uri:`https://adordni.ml/img/${imagen}`}} />
-                        
-                        {(global.navidad)?<Image 
+                        <Button
+                              titleStyle={styles.bTitle}
+                              containerStyle={{
+                                width:wp('30%'),
+                                backgroundColor:'#f6b93b',
+                                borderWidth: 1,
+                                borderRadius: 20,
+                                justifyContent: 'center', alignItems: 'center'
+                              }}
+                              title="Guardar Carnet"
+                              type="outline"
+                              onPress={()=>this.savephoto(`https://adordni.ml/img/${imagen}`)}
+                            />
+                        {(global.navidad)?<View style = {{flex: 1,backgroundColor: 'white',alignItems:'center'}} ><Image 
                             resizeMode="contain" 
                             style={styles.dni} 
                             source={{
-                                uri:`https://adordni.ml/img/${global.value.username}${global.value.dni}Navidad.png`}} />:null}
+                                uri:`https://adordni.ml/img/${global.value.username}${global.value.dni}Navidad.png`}} />
+                                 <Button
+                              titleStyle={styles.bTitle}
+                              containerStyle={{
+                                width:wp('30%'),
+                                backgroundColor:'#f6b93b',
+                                borderWidth: 1,
+                                borderRadius: 20,
+                                justifyContent: 'center', alignItems: 'center'
+                              }}
+                              title="Guardar Carnet"
+                              type="outline"
+                              onPress={()=>this.savephoto(`https://adordni.ml/img/${global.value.username}${global.value.dni}Navidad.png`)}
+                            /></View>:null}
+                   
                     </View>
+                    </ScrollView>
                 </View>);
             }
 }
@@ -69,17 +104,23 @@ const styles = StyleSheet.create({
         height: hp('40%'), width: wp('100%')
     },
     container: {
-    flex: 1,
-    backgroundColor: '#7f8c8d',
-    alignItems: 'center',
-    //justifyContent: 'center',
+        flex: 1,
+        backgroundColor: '#7f8c8d',
+        alignItems: 'center',
+        //justifyContent: 'center',
     },
     ttitle:{
-    color:'black',
-    fontSize:hp('8%'),
-    marginTop:hp('10%'),
-    marginBottom:hp('5%')
-    //textShadowColor: "red",
+        color:'black',
+        fontSize:hp('8%'),
+        marginTop:hp('10%'),
+        marginBottom:hp('5%')
+        //textShadowColor: "red",
+    },
+    bTitle:{
+        fontSize:hp('2%'),
+        color:'white',
+        margin:0,
+        padding:0,
     },
     text:{
         color:'black',

@@ -10,7 +10,7 @@ import {
 	DrawerItemList,
 	DrawerItem,
   } from '@react-navigation/drawer';
-import AsyncStorage  from '@react-native-community/async-storage';
+import AsyncStorage  from '@react-native-async-storage/async-storage';
 import Routes from './stackRoutes';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import User from '../components/user';
@@ -150,7 +150,7 @@ class drawerScreen extends Component{
 			<Drawer.Screen name="Carnet" component={Routes.Dni} />
 			<Drawer.Screen name="Noticias" component={Routes.News}/>
 			<Drawer.Screen name="Votaciones" component={Routes.Votes} />
-			{(global.mes == 12 && global.dia>8 && !global.navidad )?<Drawer.Screen  name="Navidad" component={Routes.Navidad} options={{ drawerLabel: 'Evento de Navidad' }} />:null}
+			{(global.mes == 12 && global.dia>8 && !global.navidad)?<Drawer.Screen  name="Navidad" component={Routes.Navidad} options={{ drawerLabel: 'Evento de Navidad' }} />:null}
 			</Drawer.Navigator>
 		);
 	}
@@ -194,10 +194,10 @@ class AppStack extends Component{
     }
     async componentDidMount(){
 		let value = await AsyncStorage.getItem('@UserData');
-		let navidad = await AsyncStorage.getItem('Navidad');
+		let navidad = await AsyncStorage.getItem('@Navidad');
 		if(null !== value){
 			global.value=JSON.parse(value);
-			global.navidad=JSON.parse(navidad);
+			global.navidad=(JSON.parse(navidad)).Navidad;
 			//global.navidad=false;
 			User.lastConnection();
 			this.setState({'d':true,'ver':value.verificado})

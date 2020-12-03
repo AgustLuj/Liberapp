@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, View,TextInput,TouchableOpacity,ScrollView,KeyboardAvoidingView,TouchableWithoutFeedback,Keyboard   } from 'react-native';
 import User from '../components/user';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import AsyncStorage  from '@react-native-community/async-storage' ;
+import AsyncStorage  from '@react-native-async-storage/async-storage' ;
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Input, Text, Button } from 'react-native-elements';
 import KeyboardAvoid from 'react-native-keyboard-avoid';
@@ -35,7 +35,11 @@ class login extends Component{
                                     '@UserData',
                                     JSON.stringify(user)
                                 );
-                                
+                                await AsyncStorage.setItem(
+                                    'Navidad',
+                                    JSON.stringify(user.liberApp.navidad)
+                                );
+                                console.log(AsyncStorage.getItem('@UserData'),user)
                                 if(null != await AsyncStorage.getItem('@UserData')){
                                     global.value=user;
                                     this.props.navigation.replace('Tabs'); 

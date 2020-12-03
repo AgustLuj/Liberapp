@@ -6,7 +6,6 @@ import AsyncStorage  from '@react-native-community/async-storage' ;
 import { Input, Text, Button } from 'react-native-elements';
 import { Header,ListItem, Icon } from 'react-native-elements';
 import SavePhoto from '../components/savePhotos';
-import savePhotos from '../components/savePhotos';
 
 speed();
 var userData;
@@ -26,12 +25,12 @@ class Navidad extends Component{
       global.navidad=false;
       await User.navidad( async(d)=>{
         if(d){
-          this.setState({uri:true});
-          global.navidad=false;
-          await AsyncStorage.setItem(
-            'Navidad',
+          global.navidad=true;
+          AsyncStorage.setItem(
+            '@Navidad',
             JSON.stringify({'Navidad':true})
           );
+          this.setState({uri:true});
         }else{
           this.setState({uri:false});
           global.navidad=false;
@@ -78,27 +77,30 @@ class Navidad extends Component{
                         }}
                     />
                     <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                        <Text style={{color:'#eb4d4b', fontSize:hp("10%")}}>Feliz Navidad</Text>
+                        <Text style={{color:'#eb4d4b', fontSize:hp("8%")}}>Feliz Navidad</Text>
                         <Text style={{fontSize:hp("3%")}}>Ojala que estas navidades las puedan pasar en familia o junto con personas que aprecias para todos juntos disfrutar algo juntos de este año que fue de locos</Text>
-                        {(uri)?<View style={{justifyContent: 'center', alignItems: 'center'}}><Image 
-                            resizeMode="contain" 
-                            style={styles.dni} 
-                            source={{
-                                uri:`https://adordni.ml/img/${global.value.username}${global.value.dni}Navidad.png`}} />
-                                <Button
-                            titleStyle={styles.bTitle}
-                            containerStyle={{
-                              width:wp('70%'),
-                              backgroundColor:'#eb4d4b',
-                              borderWidth: 1,
-                              borderTopLeftRadius: 20,
-                              borderTopRightRadius: 20,
-                              justifyContent: 'center', alignItems: 'center'
-                          }}
-                            title="Guardar Carnet"
-                            type="outline"
-                            onPress={()=>this.savephoto()}
-                        /></View>:<Button
+                        {(uri)?
+                          <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                            <Image 
+                              resizeMode="contain" 
+                              style={styles.dni} 
+                              source={{
+                                  uri:`https://adordni.ml/img/${global.value.username}${global.value.dni}Navidad.png`}} />
+                            <Button
+                              titleStyle={styles.bTitle}
+                              containerStyle={{
+                                width:wp('70%'),
+                                backgroundColor:'#eb4d4b',
+                                borderWidth: 1,
+                                borderTopLeftRadius: 20,
+                                borderTopRightRadius: 20,
+                                justifyContent: 'center', alignItems: 'center'
+                              }}
+                              title="Guardar Carnet"
+                              type="outline"
+                              onPress={()=>this.savephoto()}
+                            />
+                        </View>:<Button
                         titleStyle={styles.bTitle}
                         containerStyle={styles.bContainer}
                         title="Generar regalo"
@@ -106,10 +108,6 @@ class Navidad extends Component{
                         onPress={()=>{this.navidad()}}
                     />}   
                     </View>
-                </View>
-                
-                <View>
-                    
                 </View>
           </View>
         );

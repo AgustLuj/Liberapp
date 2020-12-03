@@ -5,7 +5,7 @@ import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-nativ
 import { Header } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Input, Text, Button } from 'react-native-elements';
-import AsyncStorage  from '@react-native-community/async-storage' 
+import AsyncStorage  from '@react-native-async-storage/async-storage' 
 
 class Search extends Component{
     constructor(props){

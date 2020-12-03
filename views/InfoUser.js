@@ -2,7 +2,7 @@ import React, { Component,useEffect } from 'react';
 import { StyleSheet, View,TextInput,TouchableOpacity, ScrollView,RefreshControl,Alert,Clipboard } from 'react-native';
 import User from '../components/user';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import AsyncStorage  from '@react-native-community/async-storage' ;
+import AsyncStorage  from '@react-native-async-storage/async-storage' ;
 import { Input, Text, Button } from 'react-native-elements';
 import { Header,ListItem, Icon } from 'react-native-elements';
 

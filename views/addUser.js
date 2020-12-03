@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, View,TextInput,TouchableOpacity, ScrollView,RefreshControl } from 'react-native';
 import User from '../components/user';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import AsyncStorage  from '@react-native-community/async-storage' ;
+import AsyncStorage  from '@react-native-async-storage/async-storage' ;
 import { Input, Text, Button, Header,ListItem, Icon } from 'react-native-elements';
 
 speed();
