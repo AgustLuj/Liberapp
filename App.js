@@ -13,9 +13,8 @@ class app extends Component {
     }
   }
   render(){
-    global.dia= 9//data.getDate();
-    global.mes= 12//data.getMonth()+1;
-    //console.log(data.getDate(),data.getMonth()+1);
+    global.dia= data.getDate();
+    global.mes= data.getMonth()+1;
     return (
       <View style = {{flex:1}}>
         <AppStack />
